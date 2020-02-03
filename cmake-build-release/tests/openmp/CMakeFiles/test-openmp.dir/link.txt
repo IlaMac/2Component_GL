@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/test-openmp.dir/main.cpp.o  -o test-openmp /usr/lib/gcc/x86_64-linux-gnu/8/libgomp.so -lpthread -ldl -lstdc++fs -flto 

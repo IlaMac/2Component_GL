@@ -1,0 +1,16 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/third-party-build/h5pp/src/external_h5pp-build/third-party-build/Eigen3/src/external_eigen3/test/product_small.cpp"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"BuildOfficial"
+		],
+		"name" : "product_small_7"
+	}
+}

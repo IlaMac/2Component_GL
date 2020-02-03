@@ -1,0 +1,7 @@
+simpleWriteTest 2 0.00430076
+largeWriteTest 2 0.0172761
+overWriteTest 2 0.0109693
+readWriteTest 2 0.00341179
+readWriteAttributesTest 2 0.00291866
+copySwapTest 2 0.00281441
+---

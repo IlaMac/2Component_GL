@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/tests/openmp/main.cpp
+iostream
+-
+thread
+-
+omp.h
+-
+

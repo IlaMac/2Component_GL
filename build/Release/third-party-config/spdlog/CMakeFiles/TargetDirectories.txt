@@ -1,0 +1,3 @@
+/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/third-party-config/spdlog/CMakeFiles/rebuild_cache.dir
+/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/third-party-config/spdlog/CMakeFiles/external_spdlog.dir
+/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/third-party-config/spdlog/CMakeFiles/edit_cache.dir

@@ -1,0 +1,34 @@
+Start testing: Feb 03 13:28 CET
+----------------------------------------------------------
+1/2 Testing: test-spdlog
+1/2 Test: test-spdlog
+Command: "/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/spdlog/test-spdlog"
+Directory: /home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/spdlog
+"test-spdlog" start time: Feb 03 13:28 CET
+Output:
+----------------------------------------------------------
+[2020-02-03 13:28:14][test][  info  ] This is a test!
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test-spdlog" end time: Feb 03 13:28 CET
+"test-spdlog" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: test-h5pp
+2/2 Test: test-h5pp
+Command: "/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/test-h5pp"
+Directory: /home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp
+"test-h5pp" start time: Feb 03 13:28 CET
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"test-h5pp" end time: Feb 03 13:28 CET
+"test-h5pp" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Feb 03 13:28 CET

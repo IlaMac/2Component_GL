@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/test-h5pp.dir/main.cpp.o  -o test-h5pp -Wl,-rpath,/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/hdf5/lib -flto ../../../../libs/hdf5/lib/libhdf5_hl.so ../../../../libs/hdf5/lib/libhdf5.so -ldl -lm -lz -lpthread -lstdc++fs 

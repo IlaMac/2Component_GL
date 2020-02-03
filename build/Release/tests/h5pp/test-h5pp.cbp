@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="test-h5pp"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake-modules\;CMake Files\libs\;CMake Files\libs\spdlog\;CMake Files\libs\spdlog\lib\;CMake Files\libs\spdlog\lib\cmake\;CMake Files\libs\spdlog\lib\cmake\spdlog\;CMake Files\libs\h5pp\;CMake Files\libs\h5pp\share\;CMake Files\libs\h5pp\share\cmake\;CMake Files\libs\h5pp\share\cmake\h5pp\;CMake Files\libs\Eigen3\;CMake Files\libs\Eigen3\share\;CMake Files\libs\Eigen3\share\eigen3\;CMake Files\libs\Eigen3\share\eigen3\cmake\;CMake Files\tests\;CMake Files\tests\spdlog\;CMake Files\tests\h5pp\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-h5pp">
+				<Option output="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/test-h5pp" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/gitversion"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/source"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/h5pp/include"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/Eigen3/include/eigen3"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/spdlog/include"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/hdf5/include"/>
+					<Add directory="/usr/include/c++/8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/8"/>
+					<Add directory="/usr/include/c++/8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 test-h5pp"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test-h5pp/fast">
+				<Option output="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/test-h5pp" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/gitversion"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/source"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/h5pp/include"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/Eigen3/include/eigen3"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/spdlog/include"/>
+					<Add directory="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/hdf5/include"/>
+					<Add directory="/usr/include/c++/8"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/8"/>
+					<Add directory="/usr/include/c++/8/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 test-h5pp/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/build/Release/tests/h5pp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/tests/h5pp/main.cpp">
+			<Option target="test-h5pp"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-modules/CheckExperimentalHeaders.cmake">
+			<Option virtualFolder="CMake Files\cmake-modules\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-modules/Fetch_h5pp.cmake">
+			<Option virtualFolder="CMake Files\cmake-modules\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-modules/Fetch_spdlog.cmake">
+			<Option virtualFolder="CMake Files\cmake-modules\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-modules/gitversion.cmake">
+			<Option virtualFolder="CMake Files\cmake-modules\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-modules/gitversion.h.in">
+			<Option virtualFolder="CMake Files\cmake-modules\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/spdlog/lib/cmake/spdlog/spdlogConfig.cmake">
+			<Option virtualFolder="CMake Files\libs\spdlog\lib\cmake\spdlog\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/spdlog/lib/cmake/spdlog/spdlogConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\libs\spdlog\lib\cmake\spdlog\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/spdlog/lib/cmake/spdlog/spdlogTargets.cmake">
+			<Option virtualFolder="CMake Files\libs\spdlog\lib\cmake\spdlog\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/h5pp/share/cmake/h5pp/FindPackageHDF5.cmake">
+			<Option virtualFolder="CMake Files\libs\h5pp\share\cmake\h5pp\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/h5pp/share/cmake/h5pp/h5ppConfig.cmake">
+			<Option virtualFolder="CMake Files\libs\h5pp\share\cmake\h5pp\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/h5pp/share/cmake/h5pp/h5ppConfig.deps.cmake">
+			<Option virtualFolder="CMake Files\libs\h5pp\share\cmake\h5pp\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/h5pp/share/cmake/h5pp/h5ppConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\libs\h5pp\share\cmake\h5pp\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/h5pp/share/cmake/h5pp/h5ppTargets.cmake">
+			<Option virtualFolder="CMake Files\libs\h5pp\share\cmake\h5pp\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/Eigen3/share/eigen3/cmake/Eigen3Config.cmake">
+			<Option virtualFolder="CMake Files\libs\Eigen3\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/Eigen3/share/eigen3/cmake/Eigen3ConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\libs\Eigen3\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/Eigen3/share/eigen3/cmake/Eigen3Targets.cmake">
+			<Option virtualFolder="CMake Files\libs\Eigen3\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/tests/spdlog/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\spdlog\"/>
+		</Unit>
+		<Unit filename="/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/tests/h5pp/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\h5pp\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

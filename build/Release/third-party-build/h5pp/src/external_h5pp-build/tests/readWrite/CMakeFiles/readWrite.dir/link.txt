@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/readWrite.dir/readWrite.cpp.o  -o readWrite /home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/hdf5/lib/libhdf5_hl.a /home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/hdf5/lib/libhdf5.a -ldl -lm -lz -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -lstdc++fs 

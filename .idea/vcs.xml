@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build/Release/third-party-build/h5pp/src/external_h5pp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build/Release/third-party-build/h5pp/src/external_h5pp-build/third-party-build/Eigen3/src/external_eigen3" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build/Release/third-party-build/spdlog/src/external_spdlog" vcs="Git" />
+  </component>
+</project>

@@ -1,0 +1,6 @@
+prefix=/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/libs/spdlog
+includedir=${prefix}/include
+
+Name: spdlog
+Description: Super fast C++ logging library. 
+Version: 1.3.1
