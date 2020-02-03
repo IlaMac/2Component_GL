@@ -1,0 +1,8 @@
+cmake-build*/
+build/
+tmp/
+libs/
+.idea/
+.vscode/
+Data/
+

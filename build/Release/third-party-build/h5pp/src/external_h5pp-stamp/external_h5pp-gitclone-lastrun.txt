@@ -1,3 +1,0 @@
-repository='https://github.com/DavidAce/h5pp.git'
-module=''
-tag=''

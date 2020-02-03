@@ -1,1 +1,0 @@
-/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/test-spdlog.dir/main.cpp.o CMakeFiles/test-spdlog.dir/logger.cpp.o  -o test-spdlog -lstdc++fs -flto 

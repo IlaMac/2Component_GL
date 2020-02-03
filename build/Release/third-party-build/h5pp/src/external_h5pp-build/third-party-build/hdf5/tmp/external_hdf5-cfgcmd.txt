@@ -1,1 +1,0 @@
-cmd='pwd;&&;CFLAGS=-fPIC;&&;sh;<SOURCE_DIR>/configure;--prefix=<INSTALL_DIR>;--enable-cxx;--enable-hl;--enable-silent-rules'

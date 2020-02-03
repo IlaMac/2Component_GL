@@ -1,9 +1,0 @@
-/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-build-debug/CMakeFiles/all-tests.dir
-/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-build-debug/CMakeFiles/test.dir
-/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-build-debug/CMakeFiles/GL_2components.dir
-/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-build-debug/tests/openmp/CMakeFiles/rebuild_cache.dir
-/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-build-debug/tests/openmp/CMakeFiles/edit_cache.dir
-/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-build-debug/tests/openmp/CMakeFiles/test-openmp.dir
-/home/ilaria/Desktop/MultiComponents_SC/2Components_GL/cmake-build-debug/tests/openmp/CMakeFiles/test.dir
