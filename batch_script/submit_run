@@ -4,7 +4,6 @@
 #SBATCH --mem-per-cpu=2000              # Memory per allocated cpu
 #SBATCH --nodes=2               # Number of nodes
 #SBATCH --ntasks=64
-#SBATCH --clusters=draken
 #SBATCH --output=/home/cluster_users/x_ilaria/MultiComponents_SC/Output_2C/L16_e0.5_h5.4_bmin0.15_bmax0.25/logs/log_L16_e0.5_h5.4_bmin0.15_bmax0.25.o
 #SBATCH --error=/home/cluster_users/x_ilaria/MultiComponents_SC/Output_2C/L16_e0.5_h5.4_bmin0.15_bmax0.25/logs/log_L16_e0.5_h5.4_bmin0.15_bmax0.25.e
 
