@@ -1,4 +1,4 @@
-project(GL_2components CXX)
+project(GL_2component CXX)
 cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)

@@ -28,7 +28,7 @@ void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struc
                     }
                     for(beta=alpha+1; beta<NC; beta++ ){
                         //Biquadratic Josephson= \sum_beta!=alpha |Psi_{alpha}(r)|²|Psi_{beta}(r)|²* cos(2(theta_{alpha}(r) - theta_{beta}(r)))
-                        h_Josephson+=(O2norm2(Site[i].Psi[alpha])*O2norm2(Site[i].Psi[beta])*cos(Site[i].Psi[alpha].t - Site[i].Psi[beta].t));
+                        h_Josephson+=(O2norm2(Site[i].Psi[alpha])*O2norm2(Site[i].Psi[beta])*cos(2*(Site[i].Psi[alpha].t - Site[i].Psi[beta].t));
                     }
                 }
                 for(vec=0; vec<3; vec++){
