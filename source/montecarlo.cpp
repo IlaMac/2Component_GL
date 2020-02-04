@@ -119,7 +119,7 @@ double local_HPsi(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned int 
     //Biquadratic Josephson= \sum_beta!=alpha |Psi_{alpha}(r)|²|Psi_{beta}(r)|²* cos(2(theta_{alpha}(r) - theta_{beta}(r)))
     for(beta=0; beta<NC; beta++){
         if(beta != alpha) {
-            h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[beta])*cos(2*(Psi.t - Site[i].Psi[beta].t));
+            h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[beta])*cos(2*(Psi.t - Site[i].Psi[beta].t)));
         }
     }
 
@@ -145,7 +145,7 @@ double local_Htheta(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned in
     //Biquadratic Josephson= \sum_beta!=alpha |Psi_{alpha}(r)|²|Psi_{beta}(r)|²* cos(2(theta_{alpha}(r) - theta_{beta}(r)))
     for(beta=0; beta<NC; beta++){
         if(beta != alpha) {
-            h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[beta])*cos(2*(Psi.t - Site[i].Psi[beta].t));
+            h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[beta])*cos(2*(Psi.t - Site[i].Psi[beta].t)));
         }
     }
 
