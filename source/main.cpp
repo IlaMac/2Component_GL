@@ -166,13 +166,14 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
         //Measures
         measures_reset(mis);
         energy(mis, Hp, my_beta, Site);
-        Energy_file<<n<<"\t"<<"\t"<< mis.E<< "\t"<< mis.E_pot<< "\t"<< mis.E_kin<< "\t"<< mis.E_Josephson<< "\t"<< mis.E_B<<  std::endl;
+        Energy_file<<n<<"\t"<<"\t"<< mis.E<<std::endl;
+//	"\t"<< mis.E_pot<< "\t"<< mis.E_kin<< "\t"<< mis.E_Josephson<< "\t"<< mis.E_B<<  std::endl;
         dual_stiffness(mis, Hp, Site);
         DualStiff_file<<n<<"\t"<<mis.d_rhoz<<std::endl;
         magnetization(mis, Site);
-        Magnetization_file<<n<<"\t"<<"\t"<<mis.m<<"\t"<<(mis.m*mis.m)<<"\t"<<(mis.m*mis.m*mis.m*mis.m)<<std::endl;
+        Magnetization_file<<n<<"\t"<<"\t"<<mis.m<<std::endl;
         density_psi(mis, Site);
-        DensityPsi_file<<n<<"\t"<<"\t"<<mis.density_psi[0]<<"\t"<<mis.density_psi[1]<<"\t"<<mis.density_psi[2]<<std::endl;
+        DensityPsi_file<<n<<"\t"<<"\t"<<mis.density_psi[0]<<"\t"<<mis.density_psi[1]<<std::endl;
 
         Check_file<<my_beta<<"\t"<<PTp.rank<<std::endl;
 

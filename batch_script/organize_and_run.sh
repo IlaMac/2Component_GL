@@ -1,18 +1,15 @@
 #!/bin/bash
 
 BASEDIR=${HOME}/MultiComponents_SC
-SCRIPT_DIR=${BASEDIR}/Multi_Components_GL/batch_script
+SCRIPT_DIR=${BASEDIR}/2Component_GL/batch_script
 
-LLIST="10 12 16"
+LLIST="8 10 12 16"
 
 ############# Parameters of the Hamiltonian ---> HP_init.txt in a directory whose name contains the main parameters values##################
-H_a=0
-H_b=1
-H_eta=1 
 H_e=0.5
 H_h=5.4
-H_blow=0.2245
-H_bhigh=0.229
+H_blow=0.15
+H_bhigh=0.25
 
 ############ Parameters for the Monte Carlo simulations --> MC_init.txt#####################
 
@@ -28,20 +25,17 @@ for L in $LLIST; do
 
 ############Creation of the output folder and of the two files of initialization####################
 
-cd ${BASEDIR}/Output
+cd ${BASEDIR}/Output_2C
 
-if [ ! -d ./SL${L}_a${H_a}_b${H_b}_eta${H_eta}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh} ]; then
-   mkdir -p L${L}_a${H_a}_b${H_b}_eta${H_eta}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}
+if [ ! -d ./SL${L}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh} ]; then
+   mkdir -p L${L}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}
 fi
 
-OUTPUT=${BASEDIR}/Output/L${L}_a${H_a}_b${H_b}_eta${H_eta}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}
+OUTPUT=${BASEDIR}/Output_2C/L${L}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}
 
 cd ${OUTPUT}
 
 #THE ORDER OF WRITING DOES MATTER
-echo $H_a > HP_init.txt
-echo $H_b >> HP_init.txt
-echo $H_eta >> HP_init.txt
 echo $H_e >> HP_init.txt
 echo $H_h >> HP_init.txt
 echo $H_blow >> HP_init.txt
@@ -58,7 +52,7 @@ echo $A_box >> MC_init.txt
 
 #################Creation of the submit_runs script#########################
 
-jobname="L${L}_a${H_a}_b${H_b}_eta${H_eta}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}"
+jobname="L${L}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}"
 nnodes=2
 ntasks=64 #parallel tempering over ntasks temperatures
 
@@ -87,12 +81,11 @@ echo "#!/bin/bash
 #SBATCH --mem-per-cpu=2000              # Memory per allocated cpu
 #SBATCH --nodes=${nnodes}               # Number of nodes
 #SBATCH --ntasks=${ntasks}
-#SBATCH --clusters=draken
 #SBATCH --output=${DIR_PAR}/logs/log_${jobname}.o
 #SBATCH --error=${DIR_PAR}/logs/log_${jobname}.e
 
 
-srun ${EXECUTE_DIR}/GL_3components ${L} ${DIR_PAR} &> ${DIR_PAR}/logs/log_${jobname}.o
+srun ${EXECUTE_DIR}/GL_2component ${L} ${DIR_PAR} &> ${DIR_PAR}/logs/log_${jobname}.o
 
 
 " >  submit_run
