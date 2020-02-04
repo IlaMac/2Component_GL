@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <mpi.h>
 #include "rng.h"
+#include <h5pp/h5pp.h>
 
 namespace fs = std::filesystem;
 
