@@ -19,7 +19,7 @@ void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struc
                     i = ix + Lx * (iy + iz * Ly);
                     //Potential= (3/h²)*|Psi_{alpha}(r)|² + |Psi_{alpha}(r)|⁶
                     h_Potential += (O2norm2(Site[i].Psi[alpha]) *
-                                    ((3. / h2) + O2norm2(Site[i].Psi[alpha]) * O2norm2(Site[i].Psi[alpha])));
+                                    ((3. / h2) +  (O2norm2(Site[i].Psi[alpha]) * O2norm2(Site[i].Psi[alpha])) ));
                     //Kinetic= -(1/h²)*\sum_k=1,2,3 |Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos( theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r))
                     for (vec = 0; vec < 3; vec++) {
                         h_Kinetic -= (1. / h2) * (Site[i].Psi[alpha].r * Site[nn(i, vec, 1)].Psi[alpha].r) *
