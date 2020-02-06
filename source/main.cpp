@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
     MPI_Scatter(PTroot.beta.data(), 1, MPI_DOUBLE, &my_beta, 1, MPI_DOUBLE, PTp.root, MPI_COMM_WORLD);
     MPI_Scatter(PTroot.rank_to_ind.data(), 1, MPI_INT, &my_ind, 1, MPI_INT, PTp.root, MPI_COMM_WORLD);
 
-    printf("I'm rank %d and this is my beta %lf\n", PTp.rank, my_beta);
+    printf("I'm rank %d and this is my beta %lf, charge e %lf\n", PTp.rank, my_beta, Hp.e);
 
     directory_read=directory_parameters+"/beta_"+std::to_string(my_ind);
 
@@ -165,7 +165,7 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
         //Measures
         measures_reset(mis);
         energy(mis, Hp, my_beta, Site);
-        Energy_file<< mis.E<<"\t"<< mis.E_pot<< "\t"<< mis.E_kin<< "\t"<< mis.E_Josephson<< "\t"<< mis.E_B<<  std::endl;
+        Energy_file<< mis.E<<"\t"<< mis.E*my_beta/(N*pow(Hp.h,3)) <<std::endl;
         dual_stiffness(mis, Hp, Site);
         DualStiff_file<<mis.d_rhoz<<std::endl;
         magnetization(mis, Site);

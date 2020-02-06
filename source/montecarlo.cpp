@@ -67,10 +67,10 @@ void metropolis( struct Node* Site, struct MC_parameters &MCp, struct H_paramete
                 for (vec = 0; vec < 3; vec++) {
                     //Update of A
                     OldA=Site[i].A[vec];
-                    oldE = local_HA(OldA, ix, iy, iz, alpha, Hp, Site);
+                    oldE = local_HA(OldA, ix, iy, iz, vec, Hp, Site);
                     d_A=rn::uniform_real_box(-MCp.lbox_A, MCp.lbox_A);
                     NewA= OldA + d_A;
-                    newE = local_HA(NewA, ix, iy, iz, alpha, Hp, Site);
+                    newE = local_HA(NewA, ix, iy, iz, vec, Hp, Site);
                     minus_deltaE=h3*(oldE -newE);
                     if(minus_deltaE>0.){
                         Site[i].A[vec]=NewA;
@@ -108,7 +108,7 @@ double local_HPsi(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned int 
     //We need to compute just the part of the Hamiltonian involving Psi
 
     //Potential= (3/h²)*|Psi_{alpha}(r)|² + |Psi_{alpha}(r)|⁶
-    h_Potential= O2norm2(Psi)*((3./h2)+  O2norm2(Psi)*O2norm2(Psi));
+    h_Potential= O2norm2(Psi)*(3./h2)+ pow(O2norm2(Psi), 3);
 
     //Kinetic= -(1/h²)*\sum_k=1,2,3 (|Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r))) + (|Psi_{alpha}(r-k)||Psi_{alpha}(r)|* cos(theta_{alpha}(r) - theta_{alpha}(r-k) +h*e*A_k(r-k)))
     for(vec=0; vec<3; vec++){
@@ -136,7 +136,8 @@ double local_Htheta(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned in
     i=ix +Lx*(iy+Ly*iz);
     //We need to compute just the part of the Hamiltonian involving Psi.t
 
-    //Kinetic= -(1/h²)*\sum_k=1,2,3 (|Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r))) + (|Psi_{alpha}(r-k)||Psi_{alpha}(r)|* cos(theta_{alpha}(r) - theta_{alpha}(r-k) +h*e*A_k(r-k)))
+    //Kinetic= -(1/h²)*\sum_k=1,2,3 (|Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r)))
+    // + (|Psi_{alpha}(r-k)||Psi_{alpha}(r)|* cos(theta_{alpha}(r) - theta_{alpha}(r-k) +h*e*A_k(r-k)))
     for(vec=0; vec<3; vec++){
         h_Kinetic-=(1./h2)*(Psi.r*Site[nn(i, vec, 1)].Psi[alpha].r)*cos(Site[nn(i, vec, 1)].Psi[alpha].t - Psi.t + Hp.h*Hp.e*Site[i].A[vec]);
         h_Kinetic-=(1./h2)*(Psi.r*Site[nn(i, vec, -1)].Psi[alpha].r)*cos( Psi.t -Site[nn(i, vec, -1)].Psi[alpha].t + Hp.h*Hp.e*Site[nn(i, vec, -1)].A[vec]);
@@ -155,7 +156,7 @@ double local_Htheta(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned in
 
 double local_HA(double A, unsigned int ix, unsigned int iy, unsigned int iz,  unsigned int vec,  struct H_parameters &Hp, struct Node* Site){
 
-    double h_Kinetic=0., h_B, h_tot;
+    double h_Kinetic=0., h_B=0, h_tot;
     double h2=(Hp.h*Hp.h);
     unsigned int alpha=0, i;
     i=ix +Lx*(iy+Ly*iz);
@@ -163,7 +164,7 @@ double local_HA(double A, unsigned int ix, unsigned int iy, unsigned int iz,  un
     //We need to compute just the part of the Hamiltonian involving A
 
     //Kinetic= -(1/h²)*\sum_k=1,2,3 |Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r))
-    for(alpha=0; alpha<3; alpha++){
+    for(alpha=0; alpha<NC; alpha++){
         h_Kinetic-=(1./h2)*(Site[i].Psi[alpha].r*Site[nn(i, vec, 1)].Psi[alpha].r)*cos(Site[nn(i, vec, 1)].Psi[alpha].t - Site[i].Psi[alpha].t + Hp.h*Hp.e*A);
     }
     h_B=(0.5/h2)*F_2(A, vec, ix, iy, iz, Site);

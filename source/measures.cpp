@@ -12,30 +12,29 @@ void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struc
     double h2=(Hp.h*Hp.h);
     double h3=(Hp.h*Hp.h*Hp.h);
 
-    for(ix=0; ix<Lx; ix++){
+    for(iz=0; iz<Lz; iz++){
         for(iy=0; iy<Ly; iy++){
-            for(iz=0; iz<Lz; iz++){
+            for(ix=0; ix<Lx; ix++){
                 for(alpha=0; alpha<NC; alpha++) {
                     i = ix + Lx * (iy + iz * Ly);
-                    //Potential= (3/h²)*|Psi_{alpha}(r)|² + |Psi_{alpha}(r)|⁶
-                    h_Potential += (O2norm2(Site[i].Psi[alpha]) *
-                                    ((3. / h2) +  (O2norm2(Site[i].Psi[alpha]) * O2norm2(Site[i].Psi[alpha])) ));
-                    //Kinetic= -(1/h²)*\sum_k=1,2,3 |Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos( theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r))
+                    //Potential=  + |Psi_{alpha}(r)|⁶
+                    h_Potential += ( pow(O2norm2(Site[i].Psi[alpha]), 3));
+                    //Kinetic= -(1/h²)*\sum_k=1,2,3 |Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos( theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r)) + (3/h²)*|Psi_{alpha}(r)|²
                     for (vec = 0; vec < 3; vec++) {
-                        h_Kinetic -= (1. / h2) * (Site[i].Psi[alpha].r * Site[nn(i, vec, 1)].Psi[alpha].r) *
-                                     cos(Site[nn(i, vec, 1)].Psi[alpha].t - Site[i].Psi[alpha].t +
-                                         (Hp.h * Hp.e * Site[i].A[vec]));
+                        h_Kinetic -= (1. / h2) * (Site[i].Psi[alpha].r * Site[nn(i, vec, 1)].Psi[alpha].r)*cos(Site[nn(i, vec, 1)].Psi[alpha].t - Site[i].Psi[alpha].t + (Hp.h * Hp.e * Site[i].A[vec]));
                     }
+                    h_Kinetic+=O2norm2(Site[i].Psi[alpha])*(3. / h2);
                     for(beta=alpha+1; beta<NC; beta++ ){
                         //Biquadratic Josephson= \sum_beta!=alpha |Psi_{alpha}(r)|²|Psi_{beta}(r)|²* cos(2(theta_{alpha}(r) - theta_{beta}(r)))
                         h_Josephson+=(O2norm2(Site[i].Psi[alpha])*O2norm2(Site[i].Psi[beta])*cos(2*(Site[i].Psi[alpha].t - Site[i].Psi[beta].t)));
                     }
                 }
-                for(vec=0; vec<3; vec++){
-                    for (vec2 = vec+1; vec2 < 3; vec2++) {
-                            //F_{vec1,vec2}= A_vec1(r_i) + A_vec2(ri+vec1) - A_vec1(r_i+vec2) - A_vec2(ri)
-                            F_A=(Site[i].A[vec] + Site[nn(i, vec, 1)].A[vec2] - Site[nn(i, vec2, 1)].A[vec] - Site[i].A[vec2]);
-                            h_B+=((0.5/h2)*(F_A*F_A));
+                for (vec = 0; vec < 3; vec++) {
+                    for (vec2 = vec + 1; vec2 < 3; vec2++) {
+                        //F_{vec1,vec2}= A_vec1(r_i) + A_vec2(ri+vec1) - A_vec1(r_i+vec2) - A_vec2(ri)
+                        F_A = (Site[i].A[vec] + Site[nn(i, vec, 1)].A[vec2] - Site[nn(i, vec2, 1)].A[vec] -
+                               Site[i].A[vec2]);
+                        h_B += ((0.5 / h2) * (F_A * F_A));
                     }
                 }
             }
@@ -47,8 +46,7 @@ void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struc
     mis.E_pot=(double)h3*h_Potential;
     mis.E_Josephson=(double)h3*h_Josephson;
     mis.E_B= (double)h3*h_B;
-    h_tot= h_Potential + h_Kinetic +  h_Josephson +h_B;
-    mis.E=(double)h_tot*h3;
+    mis.E= (mis.E_kin + mis.E_pot +mis.E_Josephson + mis.E_B);
 }
 
 void dual_stiffness(struct Measures &mis, struct H_parameters &Hp, struct Node* Site){
