@@ -2,7 +2,6 @@
 // Created by ilaria on 2019-11-13.
 //
 #include "initialization.h"
-#include <filesystem>
 
 void initialize_Hparameters(struct H_parameters &Hp, const fs::path & directory_parameters){
 

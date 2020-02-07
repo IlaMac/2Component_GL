@@ -231,7 +231,7 @@ message(STATUS "Settings -- flags   : ${SETTINGS_INFO_OPT}")
 ##################################################################
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} source/initialization.cpp source/initialization.h source/measures.cpp source/measures.h source/o3.h source/rng.cpp source/rng.h)
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} source/initialization.cpp source/initialization.h source/measures.cpp source/measures.h source/o3.h source/rng.cpp source/rng.h source/robust_filesystem.h)
 
 
 ##################################################################
