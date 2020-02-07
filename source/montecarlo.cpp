@@ -108,7 +108,7 @@ double local_HPsi(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned int 
     //We need to compute just the part of the Hamiltonian involving Psi
 
     //Potential= (3/h²)*|Psi_{alpha}(r)|² + |Psi_{alpha}(r)|⁶
-    h_Potential= O2norm2(Psi)*(3./h2)+ pow(O2norm2(Psi), 3);
+    h_Potential= O2norm2(Psi)*(3./h2) + pow(O2norm2(Psi), 3);
 
     //Kinetic= -(1/h²)*\sum_k=1,2,3 (|Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r))) + (|Psi_{alpha}(r-k)||Psi_{alpha}(r)|* cos(theta_{alpha}(r) - theta_{alpha}(r-k) +h*e*A_k(r-k)))
     for(vec=0; vec<3; vec++){
@@ -117,11 +117,12 @@ double local_HPsi(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned int 
     }
 
     //Biquadratic Josephson= \sum_beta!=alpha |Psi_{alpha}(r)|²|Psi_{beta}(r)|²* cos(2(theta_{alpha}(r) - theta_{beta}(r)))
-    for(beta=0; beta<NC; beta++){
-        if(beta != alpha) {
-            h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[beta])*cos(2*(Psi.t - Site[i].Psi[beta].t)));
-        }
+    if(alpha==0){
+        h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[1])*cos(2*(Psi.t - Site[i].Psi[1].t)));
+    }else if(alpha==1){
+        h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[0])*cos(2*(Psi.t - Site[i].Psi[0].t)));
     }
+
 
     h_tot= h_Potential + h_Kinetic + h_Josephson;
     return h_tot;
@@ -144,10 +145,10 @@ double local_Htheta(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned in
     }
 
     //Biquadratic Josephson= \sum_beta!=alpha |Psi_{alpha}(r)|²|Psi_{beta}(r)|²* cos(2(theta_{alpha}(r) - theta_{beta}(r)))
-    for(beta=0; beta<NC; beta++){
-        if(beta != alpha) {
-            h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[beta])*cos(2*(Psi.t - Site[i].Psi[beta].t)));
-        }
+    if(alpha==0){
+        h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[1])*cos(2*(Psi.t - Site[i].Psi[1].t)));
+    }else if(alpha==1){
+        h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[0])*cos(2*(Psi.t - Site[i].Psi[0].t)));
     }
 
     h_tot= h_Kinetic + h_Josephson;

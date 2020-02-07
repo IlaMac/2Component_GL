@@ -17,17 +17,13 @@ void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struc
             for(ix=0; ix<Lx; ix++){
                 for(alpha=0; alpha<NC; alpha++) {
                     i = ix + Lx * (iy + iz * Ly);
-                    //Potential=  + |Psi_{alpha}(r)|⁶
+                    //Potential=  +|Psi_{alpha}(r)|⁶
                     h_Potential += ( pow(O2norm2(Site[i].Psi[alpha]), 3));
                     //Kinetic= -(1/h²)*\sum_k=1,2,3 |Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos( theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r)) + (3/h²)*|Psi_{alpha}(r)|²
                     for (vec = 0; vec < 3; vec++) {
                         h_Kinetic -= (1. / h2) * (Site[i].Psi[alpha].r * Site[nn(i, vec, 1)].Psi[alpha].r)*cos(Site[nn(i, vec, 1)].Psi[alpha].t - Site[i].Psi[alpha].t + (Hp.h * Hp.e * Site[i].A[vec]));
                     }
                     h_Kinetic+=O2norm2(Site[i].Psi[alpha])*(3. / h2);
-                    for(beta=alpha+1; beta<NC; beta++ ){
-                        //Biquadratic Josephson= \sum_beta!=alpha |Psi_{alpha}(r)|²|Psi_{beta}(r)|²* cos(2(theta_{alpha}(r) - theta_{beta}(r)))
-                        h_Josephson+=(O2norm2(Site[i].Psi[alpha])*O2norm2(Site[i].Psi[beta])*cos(2*(Site[i].Psi[alpha].t - Site[i].Psi[beta].t)));
-                    }
                 }
                 for (vec = 0; vec < 3; vec++) {
                     for (vec2 = vec + 1; vec2 < 3; vec2++) {
@@ -36,7 +32,10 @@ void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struc
                                Site[i].A[vec2]);
                         h_B += ((0.5 / h2) * (F_A * F_A));
                     }
-                }
+		}
+
+            h_Josephson+=(O2norm2(Site[i].Psi[0])*O2norm2(Site[i].Psi[1])*cos(2*(Site[i].Psi[0].t - Site[i].Psi[1].t)));
+
             }
         }
     }
