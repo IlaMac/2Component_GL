@@ -3,19 +3,19 @@
 BASEDIR=${HOME}/MultiComponents_SC
 SCRIPT_DIR=${BASEDIR}/2Component_GL/batch_script
 
-LLIST="8"
+LLIST="8 10 12 16"
 
 ############# Parameters of the Hamiltonian ---> HP_init.txt in a directory whose name contains the main parameters values##################
 H_e=0.5
 H_h=5.4
-H_blow=0.2
-H_bhigh=0.25
+H_blow=0.68
+H_bhigh=0.72
 
 ############ Parameters for the Monte Carlo simulations --> MC_init.txt#####################
 
-Nmisu=1000000
+Nmisu=100000
 ntau=20
-nautosave=500000
+nautosave=50000
 l_box=1.0
 rho_box=0.5
 theta_box=3.141592653
@@ -53,8 +53,8 @@ echo $A_box >> MC_init.txt
 #################Creation of the submit_runs script#########################
 
 jobname="L${L}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}"
-nnodes=1
-ntasks=32 #parallel tempering over ntasks temperatures
+nnodes=2
+ntasks=64 #parallel tempering over ntasks temperatures
 
 #I create ntasks folder: one for each rank.
 
@@ -64,8 +64,6 @@ for ((rank=0; rank<${ntasks}; rank++)); do
 
 if [ ! -d ./Sbeta_${rank} ]; then
    mkdir -p beta_${rank}
-	
-   rm beta_$rank/*
 
 fi
 

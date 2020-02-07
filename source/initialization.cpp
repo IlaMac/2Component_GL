@@ -81,7 +81,7 @@ void initialize_lattice(struct Node* Site, const fs::path & directory_read){
     }
 
 
-    for(i=0; i<N; i++){
+/*    for(i=0; i<N; i++){
 //        for(alpha=0; alpha<NC; alpha++){
 //            Site[i].Psi[alpha].r=sqrt(1./3); //3 states for the spatial dimension
 //        }
@@ -93,7 +93,7 @@ void initialize_lattice(struct Node* Site, const fs::path & directory_read){
         polar_to_cartesian(Site[i].Psi[1]);
     }
 
-
+*/
 
 }
 
