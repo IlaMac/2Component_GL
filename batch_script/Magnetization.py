@@ -32,13 +32,15 @@ for l in range(len(L)):
         beta[b]=beta_low +b*((beta_high-beta_low)/(nbeta-1))
         file_M=("%s/beta_%d/Magnetization.txt" %(BASEDIR, b))
         Magn=(np.loadtxt(file_M, usecols=0, unpack=True))
-        Half=int(0.5*len(Magn))
-        Magn=np.array(Magn[:Half])
+        print(len(Magn))
+        Half=int(0.75*len(Magn))
+        Magn=np.array(Magn[Half:])
+        print(len(Magn))
         M[b]=np.mean(Magn)
-
-        M2[b]=np.mean(np.power((Magn), 2))**2
-        M4[b]=np.mean(np.power((Magn) , 4))
-        
+        N=Magn-np.sqrt(np.power(M[b],2))
+        M2[b]=np.power(np.mean(np.power(N, 2)) ,2)
+        M4[b]=np.mean(np.power(N, 4))
+      
         U[b]=M4[b]/(3*M2[b])   
 
     ax1.plot(beta, M, '-', label=str(L[l]))

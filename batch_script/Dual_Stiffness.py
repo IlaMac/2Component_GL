@@ -11,7 +11,7 @@ beta_high=float(sys.argv[2])
 nbeta=int(sys.argv[3])
 beta=np.zeros((nbeta))
 
-L=np.array([8, 10, 12, 16])
+L=np.array([8, 10])
 DJ=np.zeros((nbeta))
 DJ_var=np.zeros((nbeta))
 

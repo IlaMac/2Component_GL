@@ -81,18 +81,19 @@ void magnetization(struct Measures &mis, struct Node* Site){
         for (iy = 0; iy < Ly; iy++) {
             for (iz = 0; iz < Lx; iz++) {
                 i=ix +Lx*(iy+Ly*iz);
-                    phi_shifted=Site[i].Psi[1].t - Site[i].Psi[0].t;
-                    while(phi_shifted >= C_TWO_PI){
-                        phi_shifted-= C_TWO_PI;}
-                    while(phi_shifted< 0){
-                        phi_shifted+=C_TWO_PI;}
-                if(phi_shifted< C_PI){
-                    mis.m+=1;
-                }else if(phi_shifted==C_PI){
-		            mis.m+=0;
-		        }else if(phi_shifted >C_PI){
-                    mis.m+=(-1);
-                }
+                mis.m+=sin(Site[i].Psi[1].t - Site[i].Psi[0].t);
+//                    phi_shifted=Site[i].Psi[1].t - Site[i].Psi[0].t;
+//                    while(phi_shifted >= C_TWO_PI){
+//                        phi_shifted-= C_TWO_PI;}
+//                    while(phi_shifted< 0){
+//                        phi_shifted+=C_TWO_PI;}
+//                if(phi_shifted< C_PI){
+//                    mis.m+=1;
+//                }else if(phi_shifted==C_PI){
+//		            mis.m+=0;
+//		        }else if(phi_shifted >C_PI){
+//                    mis.m+=(-1);
+//                }
             }
         }
     }
