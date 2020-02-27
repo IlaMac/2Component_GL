@@ -9,10 +9,10 @@ from astropy.stats import jackknife_resampling
 beta_low=float(sys.argv[1])
 beta_high=float(sys.argv[2])
 nbeta=int(sys.argv[3])
-
+h=int(sys.argv[4])
+e=sys.argv[5]
 beta=np.zeros((nbeta))
 L=np.array([8, 10, 12, 16])
-h=5.4
 
 
 plt.rc('text', usetex=True)
@@ -22,7 +22,7 @@ fig, ((ax1, ax2))= plt.subplots(2, 1)
 
 for l in range(len(L)):
 
-    BASEDIR=("/home/ilaria/Desktop/MultiComponents_SC/Output_2C/L%d_e0.5_h5.4_bmin%s_bmax%s" %(L[l], beta_low, beta_high))
+    BASEDIR=("/home/ilaria/Desktop/MultiComponents_SC/Output_2C/L%d_e%s_h%s_bmin%s_bmax%s" %(L[l], e, h, beta_low, beta_high))
     M=np.zeros((nbeta))
     M2=np.zeros((nbeta))
     M4=np.zeros((nbeta))
@@ -30,14 +30,14 @@ for l in range(len(L)):
 
     for b in range(nbeta):
         beta[b]=beta_low +b*((beta_high-beta_low)/(nbeta-1))
-        file_M=("%s/beta_%d/Magnetization.txt" %(BASEDIR, b))
-        Magn=(np.loadtxt(file_M, usecols=0, unpack=True))
-        print(len(Magn))
-        Half=int(0.75*len(Magn))
+#        file_M=("%s/beta_%d/Magnetization.txt" %(BASEDIR, b))
+#        Magn=(np.loadtxt(file_M, usecols=0, unpack=True))
+        file_M=("%s/beta_%d/Magnetization.npy" %(BASEDIR, b))
+        Magn=np.load(file_M)
+        Half=int(0.25*len(Magn))
         Magn=np.array(Magn[Half:])
-        print(len(Magn))
         M[b]=np.mean(Magn)
-        N=Magn-np.sqrt(np.power(M[b],2))
+        N=Magn -M[b]
         M2[b]=np.power(np.mean(np.power(N, 2)) ,2)
         M4[b]=np.mean(np.power(N, 4))
       

@@ -115,45 +115,22 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
     struct Measures mis;
 
     std::string directory_write;
-    std::string E_fname;
-    std::string M_fname;
-    std::string DS_fname;
-    std::string DPsi_fname;
+    directory_write=directory_parameters+"/beta_"+std::to_string(my_ind);
+    std::string Out_name;
     std::string Check;
-
-    std::ofstream Energy_file;
-    std::ofstream Magnetization_file;
-    std::ofstream DualStiff_file;
-    std::ofstream DensityPsi_file;
+    std::ofstream Out_file;
     std::ofstream Check_file;
 
-    directory_write=directory_parameters+"/beta_"+std::to_string(my_ind);
+    Out_name=directory_write+"/Output.bin";
+    Out_file.open(Out_name, std::ios::out | std::ios::binary);
+    Out_file.close();
+    Out_file.open(Out_name, std::ios::app | std::ios::binary);
 
-    E_fname=directory_write+"/Energy.txt";
-    M_fname=directory_write+"/Magnetization.txt";
-    DS_fname=directory_write+"/Dual_Stiffness.txt";
-    DPsi_fname=directory_write+"/Psi_density.txt";
-    Check=directory_write+"/Check_file.txt";
-
-    Energy_file.open(E_fname, std::ios::out );
-    Energy_file.close();
-    Energy_file.open(E_fname, std::ios::app );
-
-    Magnetization_file.open(M_fname, std::ios::out );
-    Magnetization_file.close();
-    Magnetization_file.open(M_fname, std::ios::app );
-
-    DualStiff_file.open(DS_fname, std::ios::out );
-    DualStiff_file.close();
-    DualStiff_file.open(DS_fname, std::ios::app );
-
-    DensityPsi_file.open(DPsi_fname, std::ios::out );
-    DensityPsi_file.close();
-    DensityPsi_file.open(DPsi_fname, std::ios::app );
-
-    Check_file.open(Check, std::ios::out );
+    Check=directory_write+"/Check_file.bin";
+    Check_file.open(Check, std::ios::out | std::ios::binary);
     Check_file.close();
-    Check_file.open(Check, std::ios::app );
+    Check_file.open(Check, std::ios::app | std::ios::binary);
+
 
     measures_init(mis);
 
@@ -165,20 +142,14 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
         //Measures
         measures_reset(mis);
         energy(mis, Hp, my_beta, Site);
-        Energy_file<< mis.E<<"\t"<< mis.E*my_beta/(N*pow(Hp.h,3)) <<std::endl;
         dual_stiffness(mis, Hp, Site);
-        DualStiff_file<<mis.d_rhoz<<std::endl;
         magnetization(mis, Site);
-        Magnetization_file<<mis.m<<std::endl;
         density_psi(mis, Site);
-        DensityPsi_file<<mis.density_psi[0]<<"\t"<<mis.density_psi[1]<<std::endl;
+
+        Out_file<< mis.E << mis.m <<mis.d_rhoz<< mis.density_psi[0]<<mis.density_psi[1]<<std::endl;
+        Out_file.close();
 
         Check_file<<my_ind<<"\t"<<PTp.rank<<std::endl;
-
-        Energy_file.close();
-        Magnetization_file.close();
-        DualStiff_file.close();
-        DensityPsi_file.close();
         Check_file.close();
 
         if ((n % MCp.n_autosave) == 0) {
@@ -191,24 +162,16 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
 
         //Files and directory
         directory_write=directory_parameters+"/beta_"+std::to_string(my_ind);
-        E_fname=directory_write+"/Energy.txt";
-        M_fname=directory_write+"/Magnetization.txt";
-        DS_fname=directory_write+"/Dual_Stiffness.txt";
-        DPsi_fname=directory_write+"/Psi_density.txt";
-        Check=directory_write+"/Check_file.txt";
+        Out_name=directory_write+"/Output.bin";
+        Out_file.open(Out_name, std::ios::app | std::ios::binary);
 
-        Energy_file.open(E_fname, std::ios::app );
-        Magnetization_file.open(M_fname, std::ios::app );
-        DualStiff_file.open(DS_fname, std::ios::app );
-        DensityPsi_file.open(DPsi_fname, std::ios::app );
-        Check_file.open(Check, std::ios::app );
-
+        Check=directory_write+"/Check_file.bin";
+        Check_file.open(Check, std::ios::app | std::ios::binary);
+        
     }
     save_lattice(Site, directory_write, std::string("final"));
-    Energy_file.close();
-    Magnetization_file.close();
-    DualStiff_file.close();
-    DensityPsi_file.close();
+
+    Out_file.close();
     Check_file.close();
 
 }

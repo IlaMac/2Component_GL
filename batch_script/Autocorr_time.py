@@ -9,47 +9,54 @@ import statsmodels.api as sm
 from statsmodels.tsa.stattools import acf
 import scipy.integrate as integrate
 
-#BASEDIR, nb= input("Insert the size L, the working folder and the number of temperatures: ").split()
 
-BASEDIR=str(sys.argv[1])
-nbeta=int(sys.argv[2])
-b_low=float(sys.argv[3])
-b_high=float(sys.argv[4])
+beta_low=float(sys.argv[1])
+beta_high=float(sys.argv[2])
+nbeta=int(sys.argv[3])
+h=float(sys.argv[4])
+e=sys.argv[5]
 
 beta=np.zeros((nbeta))
+if( (h).is_integer()): h=int(h)
 
-for b in range(nbeta):
-    beta[b]=b_low +b*(b_high -b_low)/(nbeta-1)
+L=np.array([8, 10, 12, 16])
 
+Observables=["Energy", "Magnetization", "Dual_Stiffness"]
 
-Observables=["Energy", "Psi_density", "Dual_Stiffness"]
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+plt.rc('text.latex', preamble=r'\usepackage{bm}')
 
-for name in range(len(Observables)):
-    Obs_mean=np.zeros((nbeta))
-    Obs_var=np.zeros((nbeta))
-    for b in range(nbeta):
-        fileO=("%s/beta_%d/%s.txt" %(BASEDIR, b, Observables[name]))
-        if (Observables[name]=="Energy"):
-            Obs=np.loadtxt(fileO, usecols=1, unpack=True)
-        else:
-            Obs=np.loadtxt(fileO, usecols=0, unpack=True)
-        Obs_mean[b]=np.mean(Obs);
-        Obs_var[b]=np.var(Obs);
-        Obs_err=np.std(Obs, axis=0)/np.sqrt(len(Obs)-1)
-        #A_Obs=acf(Obs, nlags=100, fft=False)
-    plt.rc('text', usetex=True)
-    plt.rc('font', family='serif')
-    plt.rc('text.latex', preamble=r'\usepackage{bm}')
-    fig, ((ax1, ax2)) = plt.subplots(2, 1)
-    ax1.set_title("$%s$" %Observables[name])
+tau=np.zeros((nbeta, 3))
+tau_max=0
+for l in range(len(L)):
+    BASEDIR=("/home/ilaria/Desktop/MultiComponents_SC/Output_2C/L%d_e%s_h%s_bmin%s_bmax%s" %(L[l], e,  h, beta_low, beta_high))
+
+    fig, ax1 = plt.subplots(1, 1)
+    ax1.set_title(r"$L=%s$" %L[l])
     ax1.set_xlabel(r"$\beta$")
-    ax1.set_ylabel(r"$\langle O(t) \rangle$")
-    ax1.plot(beta, Obs_mean, 'ro-')
-    ax1.errorbar(beta, Obs_mean,yerr=Obs_err, fmt='ro', linewidth=1.0)
-    ax2.set_xlabel(r"$\beta$")
-    ax2.set_ylabel(r"$\langle O(t)^2 \rangle - \langle O(t) \rangle^2$")
-    ax2.plot(beta, Obs_var, 'o-')
-    fig.tight_layout()
-    plt.show()
-#plt.savefig('%s/beta_%d/Check_M.png' %(BASEDIR, b))
-#plt.close()
+    ax1.set_ylabel(r"$\tau$")
+
+    for b in range(nbeta):
+        beta[b]=beta_low +b*(beta_high -beta_low)/(nbeta-1)
+
+        for name in range(len(Observables)):
+            Obs_mean=np.zeros((nbeta))
+            Obs_var=np.zeros((nbeta))
+            fileO=("%s/beta_%d/%s.npy" %(BASEDIR, b, Observables[name]))
+            Obs=np.load(fileO)
+            A_Obs=acf(Obs, nlags=100, fft=True)
+            tau[b, name]=0.5*np.sum(A_Obs)
+            temp_taumax=np.amax(tau)
+            if(temp_taumax > tau_max): tau_max=temp_taumax
+
+
+    ax1.plot(beta, tau[:,0], "-", label="$%s$" %Observables[0])
+    ax1.plot(beta, tau[:,1], "-", label="$%s$" %Observables[1])
+    ax1.plot(beta, tau[:,2], "-", label="$%s$" %Observables[2])
+    ax1.annotate(r' $\tau_{MAX}=%s$' %np.amax(tau), xy=(0.05, 0.85), xycoords='axes fraction', bbox=dict(boxstyle="round", edgecolor='orange', fc="w"))
+    ax1.legend(loc="best")
+#    plt.show()
+    plt.savefig('%s/tau_L%s.png' %(BASEDIR, L[l]))
+
+print(tau_max)

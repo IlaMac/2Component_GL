@@ -10,13 +10,17 @@ beta_low=float(sys.argv[1])
 beta_high=float(sys.argv[2])
 nbeta=int(sys.argv[3])
 beta=np.zeros((nbeta))
+h=float(sys.argv[4])
+e=sys.argv[5]
 
-L=np.array([8, 10])
+
+if( (h).is_integer()): h=int(h)
+
+L=np.array([8, 10, 12, 16])
 DJ=np.zeros((nbeta))
 DJ_var=np.zeros((nbeta))
 
 print(L)
-h=5.4
 V=(L*h)**3
 
 fig, ((ax1, ax2))= plt.subplots(2, 1)
@@ -26,12 +30,14 @@ plt.rc('text.latex', preamble=r'\usepackage{bm}')
 
 for l in range(len(L)):
 
-    BASEDIR=("/home/ilaria/Desktop/MultiComponents_SC/Output_2C/L%d_e0.5_h5.4_bmin%s_bmax%s" %(L[l], beta_low, beta_high))
+    BASEDIR=("/home/ilaria/Desktop/MultiComponents_SC/Output_2C/L%d_e%s_h%s_bmin%s_bmax%s" %(L[l], e,  h, beta_low, beta_high))
     print(BASEDIR)
     for b in range(nbeta):
         beta[b]=beta_low +b*((beta_high-beta_low)/(nbeta-1))
-        file_DS=("%s/beta_%d/Dual_Stiffness.txt" %(BASEDIR, b))
-        Ds=np.loadtxt(file_DS, usecols=0, unpack=True)
+#        file_DS=("%s/beta_%d/Dual_Stiffness.txt" %(BASEDIR, b))
+#        Ds=np.loadtxt(file_DS, usecols=0, unpack=True)
+        file_DS=("%s/beta_%d/Dual_Stiffness.npy" %(BASEDIR, b))
+        Ds=np.load(file_DS)
         Half=int(0.75*len(Ds))
         DJ[b]=np.mean(Ds[:Half])
         DJ_var[b]=np.var(Ds[:Half])
