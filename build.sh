@@ -20,7 +20,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-spdlog            : Enable Spdlog logging library
    | --enable-eigen3            : Enable Eigen3 linear algebra library
    | --enable-h5pp              : Enable h5pp, an HDF5 wrapper for C++
--t | --target [=args]           : Select CMake build target [ CMakeTemplate | test-<name> ]  (default = none)
+-t | --target [=args]           : Select CMake build target [ GL_3components | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
 -v | --verbose                  : Verbose makefiles
 EXAMPLE:
