@@ -110,6 +110,11 @@ file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
+### Link MPI
+find_package(MPI REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE MPI::MPI_CXX)
+
+
 
 ##################################################################
 ###  Force cmake to find .a library suffixes on static builds  ###
@@ -135,11 +140,6 @@ if(NOT TARGET Threads::Threads)
     find_package(Threads)
     set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES pthread)
 endif()
-
-
-### Link MPI
-find_package(MPI REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE MPI::MPI_CXX)
 
 
 
