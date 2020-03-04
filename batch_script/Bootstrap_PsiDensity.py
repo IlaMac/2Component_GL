@@ -57,9 +57,14 @@ for l in range(len(L)):
 #        filePsi=("%s/beta_%d/Psi_density.npy" %(BASEDIR, b))
 #        Psi=np.load(filePsi)
         file=h5py.File('%s/beta_%d/Output.h5' %(BASEDIR, b), 'r')
-       
         Psi=np.asarray(file['Measurements']['rho'])
-        Psi=np.reshape(Psi, ((int(len(Psi)/2, 2)))
+        
+        if( (len(Psi)/2).is_integer() ):     
+            Psi=np.reshape(Psi, ((int(len(Psi)/2, 2)))
+        else: 
+            print("Error len(Psi)/2 not integer!") 
+            sys.exit()
+
         Psi1=Psi[:,0]
         Psi2=Psi[:,1]
 

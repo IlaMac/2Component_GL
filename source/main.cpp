@@ -150,7 +150,6 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
 
         file.appendTableEntries(mis, "Measurements");
 
-
         if ((n % MCp.n_autosave) == 0) {
             //Save a configuration for the restarting
             save_lattice(Site, directory_write, std::string("n") + std::to_string(n) );

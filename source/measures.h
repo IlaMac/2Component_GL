@@ -18,7 +18,7 @@ struct Measures{
     double m = 0.; //magnetization (for the phase chirality of the three components
     //Binder cumulant U=<m⁴>/(3*<m²>²)
     double d_rhoz= 0; //Dual stiffness along z
-    double density_psi[NC] = {0,0};
+    double density_psi[NC] = {0};
     int my_rank = 0;
     void reset(){
         *this = Measures();
