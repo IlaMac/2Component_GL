@@ -20,7 +20,7 @@ option(ENABLE_TESTS                 "Enables CTest testing"                     
 option(BUILD_SHARED_LIBS            "Sets shared linking on/off"                                                      OFF)
 option(ENABLE_EIGEN3                "Use Eigen3 Library. Guide with -DEIGEN_INCLUDE_DIR:PATH=<dir-to-eigen3>"         OFF)
 option(ENABLE_SPDLOG                "Use SpdLog logging library. Guide with -Dspdlog_DIR:PATH=<dir-to-spdlog>"        OFF)
-option(ENABLE_H5PP                  "Use h5pp, a C++ front-end to HDF5"                                               OFF)
+option(ENABLE_H5PP                  "Use h5pp, a C++ front-end to HDF5"                                               ON)
 option(ENABLE_OPENMP                "Enable OpenMP flags such as -fopenmp"                                            ON)
 option(ENABLE_LTO                   "Enable link time optimization"                                                   OFF)
 option(AS_SUBPROJECT                "Try using this as a subproject with add_subdirectory()"                          OFF)
