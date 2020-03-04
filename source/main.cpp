@@ -5,6 +5,7 @@
 #include "measures.h"
 #include "rng.h"
 #include "memory_check.h"
+#include <h5pp/h5pp.h>
 
 unsigned int Lx, Ly, Lz, N;
 
@@ -112,50 +113,27 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
     int n = 0, t = 0;
 
     /*Measurements*/
-    struct Measures mis;
+    Measures mis;
 
     std::string directory_write;
-    std::string E_fname;
-    std::string M_fname;
-    std::string DS_fname;
-    std::string DPsi_fname;
-    std::string Check;
-
-    std::ofstream Energy_file;
-    std::ofstream Magnetization_file;
-    std::ofstream DualStiff_file;
-    std::ofstream DensityPsi_file;
-    std::ofstream Check_file;
-
     directory_write=directory_parameters+"/beta_"+std::to_string(my_ind);
 
-    E_fname=directory_write+"/Energy.txt";
-    M_fname=directory_write+"/Magnetization.txt";
-    DS_fname=directory_write+"/Dual_Stiffness.txt";
-    DPsi_fname=directory_write+"/Psi_density.txt";
-    Check=directory_write+"/Check_file.txt";
+//    // Initialize a file
+    h5pp::File file(directory_write+"/Output.h5", h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE);
+//    // Register the compound type
+    h5pp::hid::h5t MY_HDF5_MEASURES_TYPE = H5Tcreate(H5T_COMPOUND, sizeof(Measures));
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E", HOFFSET(Measures, E), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E_pot", HOFFSET(Measures, E_pot), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E_kin", HOFFSET(Measures, E_kin), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E_Josephson", HOFFSET(Measures, E_Josephson), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E_B", HOFFSET(Measures, E_B), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "m", HOFFSET(Measures, m), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "ds", HOFFSET(Measures, d_rhoz), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "rho", HOFFSET(Measures, density_psi), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "rank", HOFFSET(Measures, my_rank), H5T_NATIVE_INT);
 
-    Energy_file.open(E_fname, std::ios::out );
-    Energy_file.close();
-    Energy_file.open(E_fname, std::ios::app );
+    file.createTable(MY_HDF5_MEASURES_TYPE, "Measurements", "Measures");
 
-    Magnetization_file.open(M_fname, std::ios::out );
-    Magnetization_file.close();
-    Magnetization_file.open(M_fname, std::ios::app );
-
-    DualStiff_file.open(DS_fname, std::ios::out );
-    DualStiff_file.close();
-    DualStiff_file.open(DS_fname, std::ios::app );
-
-    DensityPsi_file.open(DPsi_fname, std::ios::out );
-    DensityPsi_file.close();
-    DensityPsi_file.open(DPsi_fname, std::ios::app );
-
-    Check_file.open(Check, std::ios::out );
-    Check_file.close();
-    Check_file.open(Check, std::ios::app );
-
-    measures_init(mis);
 
     for (n = 0; n<MCp.nmisu; n++) {
         for (t = 0; t < MCp.tau; t++) {
@@ -163,23 +141,15 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
         }
 
         //Measures
-        measures_reset(mis);
+        mis.reset();
         energy(mis, Hp, my_beta, Site);
-        Energy_file<< mis.E<<"\t"<< mis.E*my_beta/(N*pow(Hp.h,3)) <<std::endl;
         dual_stiffness(mis, Hp, Site);
-        DualStiff_file<<mis.d_rhoz<<std::endl;
         magnetization(mis, Site);
-        Magnetization_file<<mis.m<<std::endl;
         density_psi(mis, Site);
-        DensityPsi_file<<mis.density_psi[0]<<"\t"<<mis.density_psi[1]<<std::endl;
+        mis.my_rank=PTp.rank;
 
-        Check_file<<my_ind<<"\t"<<PTp.rank<<std::endl;
+        file.appendTableEntries(mis, "Measurements");
 
-        Energy_file.close();
-        Magnetization_file.close();
-        DualStiff_file.close();
-        DensityPsi_file.close();
-        Check_file.close();
 
         if ((n % MCp.n_autosave) == 0) {
             //Save a configuration for the restarting
@@ -191,25 +161,11 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
 
         //Files and directory
         directory_write=directory_parameters+"/beta_"+std::to_string(my_ind);
-        E_fname=directory_write+"/Energy.txt";
-        M_fname=directory_write+"/Magnetization.txt";
-        DS_fname=directory_write+"/Dual_Stiffness.txt";
-        DPsi_fname=directory_write+"/Psi_density.txt";
-        Check=directory_write+"/Check_file.txt";
+        file = h5pp::File(directory_write+"/Output.h5", h5pp::AccessMode::READWRITE, h5pp::CreateMode::OPEN,0);
 
-        Energy_file.open(E_fname, std::ios::app );
-        Magnetization_file.open(M_fname, std::ios::app );
-        DualStiff_file.open(DS_fname, std::ios::app );
-        DensityPsi_file.open(DPsi_fname, std::ios::app );
-        Check_file.open(Check, std::ios::app );
 
     }
     save_lattice(Site, directory_write, std::string("final"));
-    Energy_file.close();
-    Magnetization_file.close();
-    DualStiff_file.close();
-    DensityPsi_file.close();
-    Check_file.close();
 
 }
 
