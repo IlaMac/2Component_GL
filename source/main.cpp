@@ -5,6 +5,7 @@
 #include "measures.h"
 #include "rng.h"
 #include "memory_check.h"
+#include <h5pp/h5pp.h>
 
 unsigned int Lx, Ly, Lz, N;
 
@@ -112,27 +113,27 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
     int n = 0, t = 0;
 
     /*Measurements*/
-    struct Measures mis;
+    Measures mis;
 
     std::string directory_write;
     directory_write=directory_parameters+"/beta_"+std::to_string(my_ind);
-    std::string Out_name;
-    std::string Check;
-    std::ofstream Out_file;
-    std::ofstream Check_file;
 
-    Out_name=directory_write+"/Output.bin";
-    Out_file.open(Out_name, std::ios::out | std::ios::binary);
-    Out_file.close();
-    Out_file.open(Out_name, std::ios::app | std::ios::binary);
+//    // Initialize a file
+    h5pp::File file(directory_write+"/Output.h5", h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE);
+//    // Register the compound type
+    h5pp::hid::h5t MY_HDF5_MEASURES_TYPE = H5Tcreate(H5T_COMPOUND, sizeof(Measures));
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E", HOFFSET(Measures, E), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E_pot", HOFFSET(Measures, E_pot), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E_kin", HOFFSET(Measures, E_kin), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E_Josephson", HOFFSET(Measures, E_Josephson), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "E_B", HOFFSET(Measures, E_B), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "m", HOFFSET(Measures, m), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "ds", HOFFSET(Measures, d_rhoz), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "rho", HOFFSET(Measures, density_psi), H5T_NATIVE_DOUBLE);
+    H5Tinsert(MY_HDF5_MEASURES_TYPE, "rank", HOFFSET(Measures, my_rank), H5T_NATIVE_INT);
 
-    Check=directory_write+"/Check_file.bin";
-    Check_file.open(Check, std::ios::out | std::ios::binary);
-    Check_file.close();
-    Check_file.open(Check, std::ios::app | std::ios::binary);
+    file.createTable(MY_HDF5_MEASURES_TYPE, "Measurements", "Measures");
 
-
-    measures_init(mis);
 
     for (n = 0; n<MCp.nmisu; n++) {
         for (t = 0; t < MCp.tau; t++) {
@@ -140,17 +141,15 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
         }
 
         //Measures
-        measures_reset(mis);
+        mis.reset();
         energy(mis, Hp, my_beta, Site);
         dual_stiffness(mis, Hp, Site);
         magnetization(mis, Site);
         density_psi(mis, Site);
+        mis.my_rank=PTp.rank;
 
-        Out_file<< mis.E << mis.m <<mis.d_rhoz<< mis.density_psi[0]<<mis.density_psi[1]<<std::endl;
-        Out_file.close();
+        file.appendTableEntries(mis, "Measurements");
 
-        Check_file<<my_ind<<"\t"<<PTp.rank<<std::endl;
-        Check_file.close();
 
         if ((n % MCp.n_autosave) == 0) {
             //Save a configuration for the restarting
@@ -162,17 +161,11 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
 
         //Files and directory
         directory_write=directory_parameters+"/beta_"+std::to_string(my_ind);
-        Out_name=directory_write+"/Output.bin";
-        Out_file.open(Out_name, std::ios::app | std::ios::binary);
+        file = h5pp::File(directory_write+"/Output.h5", h5pp::AccessMode::READWRITE, h5pp::CreateMode::OPEN,0);
 
-        Check=directory_write+"/Check_file.bin";
-        Check_file.open(Check, std::ios::app | std::ios::binary);
-        
+
     }
     save_lattice(Site, directory_write, std::string("final"));
-
-    Out_file.close();
-    Check_file.close();
 
 }
 

@@ -17,7 +17,7 @@ project(GL_2component CXX)
 
 ### Set options for compilation
 option(ENABLE_TESTS                 "Enables CTest testing"                                                           OFF)
-option(BUILD_SHARED_LIBS            "Sets shared linking on/off"                                                      ON)
+option(BUILD_SHARED_LIBS            "Sets shared linking on/off"                                                      OFF)
 option(ENABLE_EIGEN3                "Use Eigen3 Library. Guide with -DEIGEN_INCLUDE_DIR:PATH=<dir-to-eigen3>"         OFF)
 option(ENABLE_SPDLOG                "Use SpdLog logging library. Guide with -Dspdlog_DIR:PATH=<dir-to-spdlog>"        OFF)
 option(ENABLE_H5PP                  "Use h5pp, a C++ front-end to HDF5"                                               OFF)
