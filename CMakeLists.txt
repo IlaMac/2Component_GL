@@ -111,6 +111,17 @@ file(GLOB_RECURSE HEADERS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 
+##################################################################
+###  Force cmake to find .a library suffixes on static builds  ###
+##################################################################
+if(BUILD_SHARED_LIBS)
+    set(LINK_TYPE SHARED)
+else()
+    set(LINK_TYPE STATIC)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
+    target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
+endif()
+
 
 ##################################################################
 ### Preempt Threads::Threads                                   ###

@@ -98,7 +98,7 @@ done
 
 if  [ -n "$clear_cmake" ] ; then
     echo "Clearing CMake files from build."
-	rm -rf ./build/$build_type
+	  rm -rf ./build/$build_type
 fi
 
 build_type_lower=$(echo $build_type | tr '[:upper:]' '[:lower:]')
