@@ -1,6 +1,7 @@
 #include "montecarlo.h"
 #include "main.h"
 #include "rng.h"
+#include "tictoc/timers.h"
 
 void metropolis( struct Node* Site, struct MC_parameters &MCp, struct H_parameters &Hp,  double my_beta){
 
