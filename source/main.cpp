@@ -86,18 +86,18 @@ int main(int argc, char *argv[]){
     //Mainloop
     mainloop(Lattice, MCp, Hp, my_beta, my_ind, PTp, PTroot, directory_parameters);
 
-    if(PTp.rank == PTp.root){prof::t_total.toc();}
+    if(PTp.rank == PTp.root){
 
-    std::cout << "Proccess current resident ram usage: " << process_memory_in_mb("VmRSS") << " MB" << std::endl;
-    std::cout << "Proccess maximum resident ram usage: " << process_memory_in_mb("VmHWM") << " MB" << std::endl;
-    std::cout << "Proccess maximum virtual  ram usage: " << process_memory_in_mb("VmPeak") << " MB" << std::endl;
-
-    if(PTp.rank == PTp.root) {
+        prof::t_total.toc();
         prof::t_total.print_time();
         prof::t_update.print_time();
         prof::t_swap.print_time();
         prof::t_measures.print_time();
         prof::t_writing.print_time();
+
+        std::cout << "Proccess current resident ram usage: " << process_memory_in_mb("VmRSS") << " MB" << std::endl;
+        std::cout << "Proccess maximum resident ram usage: " << process_memory_in_mb("VmHWM") << " MB" << std::endl;
+        std::cout << "Proccess maximum virtual  ram usage: " << process_memory_in_mb("VmPeak") << " MB" << std::endl;
     }
 
     return 0;
@@ -133,14 +133,14 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
     for (n = 0; n<MCp.nmisu; n++) {
         for (t = 0; t < MCp.tau; t++) {
             if(PTp.rank == PTp.root){ prof::t_update.tic();}
-            metropolis(Site, MCp, Hp,  my_beta);
+            metropolis( Site, MCp, Hp,  my_beta);
             if(PTp.rank == PTp.root) {prof::t_update.toc();}
         }
 
         //Measures
         if(PTp.rank == PTp.root){ prof::t_measures.tic();}
         mis.reset();
-        energy(mis, Hp, my_beta, Site);
+        energy(mis, Hp, Site);
         dual_stiffness(mis, Hp, Site);
         magnetization(mis, Site);
         density_psi(mis, Site);
@@ -159,9 +159,8 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
         //Parallel Tempering swap
         if(PTp.rank == PTp.root and  n==0) {prof::t_swap.tic();}
         parallel_temp(mis.E, my_beta, my_ind, PTp, PTroot);
-        if(PTp.rank == PTp.root and  n==0) {
-            prof::t_swap.toc();
-        }
+        if(PTp.rank == PTp.root and  n==0) {prof::t_swap.toc();}
+
         //Files and directory
         directory_write=directory_parameters+"/beta_"+std::to_string(my_ind);
         file = h5pp::File(directory_write+"/Output.h5", h5pp::AccessMode::READWRITE, h5pp::CreateMode::OPEN,0);

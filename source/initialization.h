@@ -24,6 +24,7 @@ struct H_parameters{
     /*These values are externally given by an input file*/
     double e;
     double h;
+    double nu; //AB term
     double b_low; //lowest beta for the parallel tempering procedure
     double b_high; // highest beta for the parallel tempering procedure
 

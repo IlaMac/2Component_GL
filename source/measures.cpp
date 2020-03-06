@@ -4,13 +4,14 @@
 
 #include "measures.h"
 
-void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struct Node* Site){
+void energy(struct Measures &mis, struct H_parameters &Hp, struct Node* Site){
 
-    unsigned int i, ix, iy, iz, alpha, beta, vec, vec2;
-    double h_Potential=0., h_Kinetic=0., h_Josephson=0., h_B=0., h_tot=0.;
+    unsigned int i = 0, ix, iy, iz, alpha, beta, vec, vec2;
+    double h_Potential=0., h_Kinetic=0., h_Josephson=0., h_B=0., h_AB=0.;
     double F_A=0;
     double h2=(Hp.h*Hp.h);
     double h3=(Hp.h*Hp.h*Hp.h);
+    double J_alpha, J_beta;
 
     for(iz=0; iz<Lz; iz++){
         for(iy=0; iy<Ly; iy++){
@@ -26,14 +27,23 @@ void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struc
                     h_Kinetic+=O2norm2(Site[i].Psi[alpha])*(3. / h2);
                 }
                 for (vec = 0; vec < 3; vec++) {
+                    //Andreev-Bashkin term = \sum_beta!=alpha \sum_k=1,2,3 nu*(J^k_alpha - J^k_beta)^2;
+                    // with J^k_alpha= |Psi_{alpha}(r)||Psi_{alpha}(r+k)|* sin(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r)))
+                    if(Hp.nu !=0 ) {
+                        J_alpha = (1. / Hp.h) * (Site[i].Psi[0].r * Site[nn(i, vec, 1)].Psi[0].r) *
+                                  sin(Site[nn(i, vec, 1)].Psi[0].t - Site[i].Psi[0].t + Hp.h * Hp.e * Site[i].A[vec]);
+                        J_beta = (1. / Hp.h) * (Site[i].Psi[1].r * Site[nn(i, vec, 1)].Psi[1].r) *
+                                 sin(Site[nn(i, vec, 1)].Psi[1].t - Site[i].Psi[1].t + Hp.h * Hp.e * Site[i].A[vec]);
+                        h_AB += Hp.nu * ((J_alpha - J_beta) * (J_alpha - J_beta));
+                    }
+
                     for (vec2 = vec + 1; vec2 < 3; vec2++) {
                         //F_{vec1,vec2}= A_vec1(r_i) + A_vec2(ri+vec1) - A_vec1(r_i+vec2) - A_vec2(ri)
                         F_A = (Site[i].A[vec] + Site[nn(i, vec, 1)].A[vec2] - Site[nn(i, vec2, 1)].A[vec] -
                                Site[i].A[vec2]);
                         h_B += ((0.5 / h2) * (F_A * F_A));
                     }
-		}
-
+		        }
             h_Josephson+=(O2norm2(Site[i].Psi[0])*O2norm2(Site[i].Psi[1])*cos(2*(Site[i].Psi[0].t - Site[i].Psi[1].t)));
 
             }
@@ -41,10 +51,11 @@ void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struc
     }
 
     //to compute the heat capacity it is important to consider the total physical energy which is h_tot*h³
-    mis.E_kin=(double)h3*h_Kinetic;
-    mis.E_pot=(double)h3*h_Potential;
-    mis.E_Josephson=(double)h3*h_Josephson;
+    mis.E_kin= (double)h3*h_Kinetic;
+    mis.E_pot= (double)h3*h_Potential;
+    mis.E_Josephson= (double)h3*h_Josephson;
     mis.E_B= (double)h3*h_B;
+    mis.E_AB= (double)h3*h_AB;
     mis.E= (mis.E_kin + mis.E_pot +mis.E_Josephson + mis.E_B);
 }
 

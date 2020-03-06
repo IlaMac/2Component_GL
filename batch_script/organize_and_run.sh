@@ -7,14 +7,15 @@ LLIST="8"
 
 ############# Parameters of the Hamiltonian ---> HP_init.txt in a directory whose name contains the main parameters values##################
 H_e=0.5
-H_h=5.4
-H_blow=0.2
-H_bhigh=0.25
+H_h=6
+H_nu=0.
+H_blow=0.53
+H_bhigh=0.6
 
 ############ Parameters for the Monte Carlo simulations --> MC_init.txt#####################
 
 Nmisu=1000000
-ntau=20
+ntau=32
 nautosave=500000
 l_box=1.0
 rho_box=0.5
@@ -27,17 +28,18 @@ for L in $LLIST; do
 
 cd ${BASEDIR}/Output_2C
 
-if [ ! -d ./SL${L}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh} ]; then
-   mkdir -p L${L}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}
+if [ ! -d ./SL${L}_e${H_e}_h${H_h}_nu${H_nu}_bmin${H_blow}_bmax${H_bhigh} ]; then
+   mkdir -p L${L}_e${H_e}_h${H_h}_nu${H_nu}_bmin${H_blow}_bmax${H_bhigh}
 fi
 
-OUTPUT=${BASEDIR}/Output_2C/L${L}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}
+OUTPUT=${BASEDIR}/Output_2C/L${L}_e${H_e}_h${H_h}_nu${H_nu}_bmin${H_blow}_bmax${H_bhigh}
 
 cd ${OUTPUT}
 
 #THE ORDER OF WRITING DOES MATTER
 echo $H_e >> HP_init.txt
 echo $H_h >> HP_init.txt
+echo $H_nu >> HP_init.txt
 echo $H_blow >> HP_init.txt
 echo $H_bhigh >> HP_init.txt
 
@@ -52,7 +54,7 @@ echo $A_box >> MC_init.txt
 
 #################Creation of the submit_runs script#########################
 
-jobname="L${L}_e${H_e}_h${H_h}_bmin${H_blow}_bmax${H_bhigh}"
+jobname="L${L}_e${H_e}_h${H_h}_nu${H_nu}_bmin${H_blow}_bmax${H_bhigh}"
 nnodes=1
 ntasks=32 #parallel tempering over ntasks temperatures
 
