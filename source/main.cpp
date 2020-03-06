@@ -5,16 +5,17 @@
 #include "measures.h"
 #include "rng.h"
 #include "memory_check.h"
-
+#include "tictoc/timers.h"
 unsigned int Lx, Ly, Lz, N;
 
 int main(int argc, char *argv[]){
 
-    struct Node* Lattice;
-    struct H_parameters Hp;
-    struct MC_parameters MCp;
-    struct PT_parameters PTp;
-    struct PTroot_parameters PTroot;
+    Node* Lattice;
+    H_parameters Hp;
+    MC_parameters MCp;
+    PT_parameters PTp;
+    PTroot_parameters PTroot;
+
     unsigned int i;
     long int seednumber=-1; /*by default it is a negative number which means that rng will use random_device*/
     double my_beta=0.244;
@@ -65,7 +66,7 @@ int main(int argc, char *argv[]){
     MPI_Comm_rank(MPI_COMM_WORLD, &PTp.rank);
 /*DETERMINE TOTAL NUMBER OF PROCESSORS*/
     MPI_Comm_size(MPI_COMM_WORLD, &PTp.np);
-
+    if(PTp.rank == PTp.root) prof::t_total.tic();
     if(PTp.rank == PTp.root) {
         //Initial time
         tic = time(0);
@@ -86,18 +87,20 @@ int main(int argc, char *argv[]){
     initialize_lattice(Lattice, directory_read);
     //Mainloop
     mainloop(Lattice, MCp, Hp, my_beta, my_ind, PTp, PTroot, directory_parameters);
-
+    if(PTp.rank == PTp.root) prof::t_total.toc();
     if(PTp.rank == PTp.root) {
         //Final time
         toc = time(0);
-    }
 
+
+    }
 
     std::cout << "Proccess current resident ram usage: " << process_memory_in_mb("VmRSS") << " MB" << std::endl;
     std::cout << "Proccess maximum resident ram usage: " << process_memory_in_mb("VmHWM") << " MB" << std::endl;
     std::cout << "Proccess maximum virtual  ram usage: " << process_memory_in_mb("VmPeak") << " MB" << std::endl;
 
     if(PTp.rank == PTp.root) {
+        prof::t_total.print_time();
         std::cout << "Total runtime: "
                   << ((toc - tic) / 3600 > 0 ? std::to_string((toc - tic) / 3600) + " h " : "")
                   << ((toc - tic) / 60 > 0 ? std::to_string(((toc - tic) % 3600) / 60) + " min " : "")

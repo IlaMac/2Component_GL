@@ -20,6 +20,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-spdlog            : Enable Spdlog logging library
    | --enable-eigen3            : Enable Eigen3 linear algebra library
    | --enable-h5pp              : Enable h5pp, an HDF5 wrapper for C++
+   | --prefer-conda             : Prefer finding libraries installed through conda
 -t | --target [=args]           : Select CMake build target [ GL_3components | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
 -v | --verbose                  : Verbose makefiles
@@ -49,6 +50,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o hb:cl:df:g:j:st:v \
                 enable-eigen3\
                 enable-h5pp\
                 extra-flags:\
+                prefer-conda\
                 verbose\
                 "  -- "$@")
 
@@ -89,6 +91,7 @@ do
        --enable-eigen3)             enable_eigen3="ON"              ; echo " * Enable Eigen3            : ON"      ; shift   ;;
        --enable-h5pp)               enable_h5pp="ON"                ; echo " * Enable h5pp              : ON"      ; shift   ;;
     -v|--verbose)                   verbose="ON"                    ; echo " * Verbose makefiles        : ON"      ; shift   ;;
+    -v|--prefer-conda)              prefer_conda="ON"               ; echo " * Prefer Conda libs        : ON"      ; shift   ;;
     --) shift; echo ""; break;;
   esac
 done
@@ -98,7 +101,7 @@ done
 
 if  [ -n "$clear_cmake" ] ; then
     echo "Clearing CMake files from build."
-	rm -rf ./build/$build_type
+	rm -rf ./build/$build_type/CMakeCache.txt
 fi
 
 build_type_lower=$(echo $build_type | tr '[:upper:]' '[:lower:]')
@@ -140,6 +143,7 @@ Running script:
             -DENABLE_H5PP=$enable_h5pp
             -DENABLE_TESTS=$enable_tests
             -DBUILD_SHARED_LIBS=$shared
+            -DPREFER_CONDA_LIBS=$prefer_conda \
             -DGCC_TOOLCHAIN=$gcc_toolchain
             -DCMAKE_VERBOSE_MAKEFILE=$verbose
             $extra_flags
@@ -160,6 +164,7 @@ if [ -z "$dryrun" ] ;then
             -DENABLE_H5PP=$enable_h5pp \
             -DENABLE_TESTS=$enable_tests \
             -DBUILD_SHARED_LIBS=$shared \
+            -DPREFER_CONDA_LIBS=$prefer_conda \
             -DGCC_TOOLCHAIN=$gcc_toolchain \
             -DCMAKE_VERBOSE_MAKEFILE=$verbose \
             $extra_flags \
