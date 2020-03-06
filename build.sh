@@ -131,7 +131,8 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     if [ -z "$no_module" ]; then
         module load zlib
         module load GCC/8.2.0-2.31.1
-        module load OpenMPI/3.1.3-GCC-8.2.0-2.31.1
+        module load OpenMPI
+        module load HDF5/1.10.1-nsc1-intel-2018b-eb
         if [ "$compiler" = "Clang" ] ; then
             module load Clang/8.0.0-GCCcore-8.2.0
             if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
