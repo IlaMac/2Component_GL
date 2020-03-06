@@ -135,15 +135,16 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
     Check_file.open(Check, std::ios::app | std::ios::binary);
 
 
-    measures_init(mis);
-
+//    measures_init(mis);
+    mis.reset();
     for (n = 0; n<MCp.nmisu; n++) {
         for (t = 0; t < MCp.tau; t++) {
             metropolis(Site, MCp, Hp,  my_beta);
         }
 
         //Measures
-        measures_reset(mis);
+//        measures_reset(mis);
+        mis.reset();
         energy(mis, Hp, my_beta, Site);
         dual_stiffness(mis, Hp, Site);
         magnetization(mis, Site);
