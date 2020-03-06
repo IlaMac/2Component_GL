@@ -123,6 +123,50 @@ if [[ ! "$download_method" =~ native|conan|find|none ]]; then
 fi
 
 
+if [[ "$HOSTNAME" == *"tetralith"* ]];then
+    echo "Running on tetralith"
+    if [ -z "$no_module" ]; then
+        module load zlib
+        module load GCC/8.2.0-2.31.1
+        if [ "$compiler" = "Clang" ] ; then
+            module load Clang/8.0.0-GCCcore-8.2.0
+            if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
+        fi
+    fi
+
+    if [ "$compiler" = "GNU" ] ; then
+        export CC=gcc
+        export CXX=g++
+    elif [ "$compiler" = "Clang" ] ; then
+        export CC=clang
+        export CXX=clang++
+    fi
+
+elif [[ "$HOSTNAME" == *"raken"* ]];then
+    if [ -z "$no_module" ]; then
+        if [ "$enable_mkl" = "ON" ] ; then module load imkl; else module load OpenBLAS; fi
+        module load HDF5/1.10.5-GCCcore-8.2.0
+        module load Eigen # We want our own patched eigen though.
+        module load CMake
+        module load GCCcore
+        if [ "$compiler" = "Clang" ] ; then
+            module load Clang
+            if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
+        fi
+        module list
+    fi
+
+    if [ "$compiler" = "GNU" ] ; then
+        export CC=gcc
+        export CXX=g++
+    elif [ "$compiler" = "Clang" ] ; then
+        export CC=clang
+        export CXX=clang++
+    fi
+fi
+
+
+
 
 if [ -n "$dryrun" ]; then
     echo "Dry run build sequence"

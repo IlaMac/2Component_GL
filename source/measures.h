@@ -10,23 +10,23 @@
 
 struct Measures{
 
-    double m; //magnetization (for the phase chirality of the three components
+    double E = 0.; //Energy
+    double E_pot = 0.;
+    double E_kin = 0.;
+    double E_Josephson = 0.;
+    double E_B = 0.;
+    double m = 0.; //magnetization (for the phase chirality of the three components
     //Binder cumulant U=<m⁴>/(3*<m²>²)
-
-    double E; //Energy
-    double E_pot;
-    double E_kin;
-    double E_Josephson;
-    double E_B;
-
-    double d_rhoz; //Dual stiffness along z
-
-    double *density_psi;
+    double d_rhoz= 0; //Dual stiffness along z
+    double density_psi[NC] = {0};
+    int my_rank = 0;
+    void reset(){
+        *this = Measures();
+    }
 };
 
 
-void measures_init(struct Measures &mis);
-void measures_reset(struct Measures &mis);
+
 void dual_stiffness(struct Measures &mis, struct H_parameters &Hp, struct Node* Site);
 void magnetization(struct Measures &mis, struct Node* Site);
 void energy(struct Measures &mis, struct H_parameters &Hp, double my_beta, struct Node* Site);

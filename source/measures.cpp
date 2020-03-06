@@ -149,27 +149,4 @@ void save_lattice(struct Node* Site, const fs::path & directory_write, std::stri
 
 }
 
-void measures_init(struct Measures &mis){
-    //Initialization
-    mis.d_rhoz=0.;
-    mis.m=0.;
-    mis.E=0.;
-    mis.E_pot=0.;
-    mis.E_kin=0.;
-    mis.E_Josephson=0.;
-    mis.E_B=0.;
-    mis.density_psi=(double *) calloc(NC, sizeof(double));
-}
-
-void measures_reset(struct Measures &mis){
-    //Initialization
-    mis.d_rhoz=(double)0.0;
-    mis.m=(double)0.0;
-    mis.E=(double)0.0;
-    mis.E_pot=(double)0.0;
-    mis.E_kin=(double)0.0;
-    mis.E_Josephson=(double)0.0;
-    mis.E_B=(double)0.0;
-    memset(mis.density_psi, 0, NC*sizeof(double));
-}
 

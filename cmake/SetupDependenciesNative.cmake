@@ -41,6 +41,8 @@ endif()
 
 include(cmake/PrintTargetInfo.cmake)
 print_target_info(h5pp::h5pp)
+print_target_info(h5pp::deps)
+print_target_info(hdf5::hdf5)
 print_target_info(spdlog::spdlog)
 print_target_info(Eigen3::Eigen)
 print_target_info(openmp::openmp)
