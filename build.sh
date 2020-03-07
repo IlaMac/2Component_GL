@@ -8,6 +8,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -a | --arch [=arg]              : Choose microarchitecture | core2 | nehalem | sandybridge | haswell | native | (default = native)
 -b | --build-type [=arg]        : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
 -c | --clear-cmake              : Clear CMake files before build (delete ./build)
+-g | --compiler [=arg]          : Compiler        | GNU | Clang | (default = "")
 -d | --dry-run                  : Dry run
    | --download-method          : Download libraries using [ native | conan ] (default = native)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
@@ -20,6 +21,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-spdlog            : Enable Spdlog logging library
    | --enable-eigen3            : Enable Eigen3 linear algebra library
    | --enable-h5pp              : Enable h5pp, an HDF5 wrapper for C++
+   | --prefer-conda             : Prefer finding libraries installed through conda
 -t | --target [=args]           : Select CMake build target [ GL_3components | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
 -v | --verbose                  : Verbose makefiles
@@ -38,6 +40,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o hb:cl:df:g:j:st:v \
                 target:\
                 clear-cmake\
                 clear-libs:\
+                compiler:\
                 dry-run\
                 download-method:\
                 enable-tests\
@@ -49,6 +52,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o hb:cl:df:g:j:st:v \
                 enable-eigen3\
                 enable-h5pp\
                 extra-flags:\
+                prefer-conda\
                 verbose\
                 "  -- "$@")
 
@@ -76,10 +80,11 @@ do
     -c|--clear-cmake)               clear_cmake="ON"                ; echo " * Clear CMake              : ON"      ; shift   ;;
     -l|--clear-libs)
             clear_libs=($(echo "$2" | tr ',' ' '))                  ; echo " * Clear libraries          : $2"      ; shift 2 ;;
+    -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
     -d|--dry-run)                   dryrun="ON"                     ; echo " * Dry run                  : ON"      ; shift   ;;
        --download-method)           download_method=$2              ; echo " * Download method          : $2"      ; shift 2 ;;
     -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
-    -g|--gcc-toolchain)             gcc_toolchain=$2                ; echo " * GCC toolchain            : $2"      ; shift 2 ;;
+       --gcc-toolchain)             gcc_toolchain=$2                ; echo " * GCC toolchain            : $2"      ; shift 2 ;;
     -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads             : $2"      ; shift 2 ;;
     -s|--enable-shared)             shared="ON"                     ; echo " * Link shared libraries    : ON"      ; shift   ;;
        --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
@@ -89,6 +94,7 @@ do
        --enable-eigen3)             enable_eigen3="ON"              ; echo " * Enable Eigen3            : ON"      ; shift   ;;
        --enable-h5pp)               enable_h5pp="ON"                ; echo " * Enable h5pp              : ON"      ; shift   ;;
     -v|--verbose)                   verbose="ON"                    ; echo " * Verbose makefiles        : ON"      ; shift   ;;
+    -v|--prefer-conda)              prefer_conda="ON"               ; echo " * Prefer Conda libs        : ON"      ; shift   ;;
     --) shift; echo ""; break;;
   esac
 done
@@ -98,7 +104,7 @@ done
 
 if  [ -n "$clear_cmake" ] ; then
     echo "Clearing CMake files from build."
-	rm -rf ./build/$build_type
+	rm -rf ./build/$build_type/CMakeCache.txt
 fi
 
 build_type_lower=$(echo $build_type | tr '[:upper:]' '[:lower:]')
@@ -118,6 +124,50 @@ if [[ ! "$download_method" =~ native|conan|find|none ]]; then
     echo "Download method unsupported: $download_method"
     exit 1
 fi
+
+
+if [[ "$HOSTNAME" == *"tetralith"* ]];then
+    echo "Running on tetralith"
+    if [ -z "$no_module" ]; then
+        module load buildenv-gcc/2018a-eb
+        module load GCCcore/8.2.0
+        if [ "$compiler" = "Clang" ] ; then
+            module load Clang/8.0.0-GCCcore-8.2.0
+            if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
+        fi
+    fi
+
+    if [ "$compiler" = "GNU" ] ; then
+        export CC=gcc
+        export CXX=g++
+    elif [ "$compiler" = "Clang" ] ; then
+        export CC=clang
+        export CXX=clang++
+    fi
+
+elif [[ "$HOSTNAME" == *"raken"* ]];then
+    if [ -z "$no_module" ]; then
+        if [ "$enable_mkl" = "ON" ] ; then module load imkl; else module load OpenBLAS; fi
+        module load HDF5/1.10.5-GCCcore-8.2.0
+        module load Eigen # We want our own patched eigen though.
+        module load CMake
+        module load GCCcore
+        if [ "$compiler" = "Clang" ] ; then
+            module load Clang
+            if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
+        fi
+        module list
+    fi
+
+    if [ "$compiler" = "GNU" ] ; then
+        export CC=gcc
+        export CXX=g++
+    elif [ "$compiler" = "Clang" ] ; then
+        export CC=clang
+        export CXX=clang++
+    fi
+fi
+
 
 
 
@@ -140,6 +190,7 @@ Running script:
             -DENABLE_H5PP=$enable_h5pp
             -DENABLE_TESTS=$enable_tests
             -DBUILD_SHARED_LIBS=$shared
+            -DPREFER_CONDA_LIBS=$prefer_conda \
             -DGCC_TOOLCHAIN=$gcc_toolchain
             -DCMAKE_VERBOSE_MAKEFILE=$verbose
             $extra_flags
@@ -160,6 +211,7 @@ if [ -z "$dryrun" ] ;then
             -DENABLE_H5PP=$enable_h5pp \
             -DENABLE_TESTS=$enable_tests \
             -DBUILD_SHARED_LIBS=$shared \
+            -DPREFER_CONDA_LIBS=$prefer_conda \
             -DGCC_TOOLCHAIN=$gcc_toolchain \
             -DCMAKE_VERBOSE_MAKEFILE=$verbose \
             $extra_flags \

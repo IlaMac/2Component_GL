@@ -1,6 +1,7 @@
 #include "montecarlo.h"
 #include "main.h"
 #include "rng.h"
+#include "tictoc/timers.h"
 
 void metropolis( struct Node* Site, struct MC_parameters &MCp, struct H_parameters &Hp,  double my_beta){
 
@@ -12,6 +13,7 @@ void metropolis( struct Node* Site, struct MC_parameters &MCp, struct H_paramete
     double NewA, OldA;
     double newE, oldE, minus_deltaE;
     double h3=(Hp.h*Hp.h*Hp.h);
+
 
     for (ix= 0; ix < Lx; ix++) {
         for (iy = 0; iy < Ly; iy++) {
@@ -99,11 +101,19 @@ void metropolis( struct Node* Site, struct MC_parameters &MCp, struct H_paramete
 
 double local_HPsi(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned int iz, unsigned int alpha,  struct H_parameters &Hp, struct Node* Site){
 
-    double h_Potential, h_Kinetic=0., h_Josephson=0., h_tot;
+    double h_Potential, h_Kinetic=0., h_Josephson=0., h_AB=0., h_tot;
     double h2=(Hp.h*Hp.h);
-    unsigned int beta=0, vec=0, i;
+    double J_alpha, J_beta;
+    unsigned int beta, vec=0, i;
 
     i=ix +Lx*(iy+Ly*iz);
+
+    if(alpha==0){
+        beta=1;
+    }else if(alpha==1){
+        beta=0;
+    }
+
     //Compute the local Energy respect to a given component (alpha) of the matter field Psi and a given spatial position (r=(ix, iy, iz))
     //We need to compute just the part of the Hamiltonian involving Psi
 
@@ -117,24 +127,41 @@ double local_HPsi(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned int 
     }
 
     //Biquadratic Josephson= \sum_beta!=alpha |Psi_{alpha}(r)|²|Psi_{beta}(r)|²* cos(2(theta_{alpha}(r) - theta_{beta}(r)))
-    if(alpha==0){
-        h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[1])*cos(2*(Psi.t - Site[i].Psi[1].t)));
-    }else if(alpha==1){
-        h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[0])*cos(2*(Psi.t - Site[i].Psi[0].t)));
+    h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[beta])*cos(2*(Psi.t - Site[i].Psi[beta].t)));
+
+    //Andreev-Bashkin term = \sum_beta!=alpha \sum_k=1,2,3 nu*(J^k_alpha - J^k_beta)^2;
+    // with J^k_alpha= |Psi_{alpha}(r)||Psi_{alpha}(r+k)|* sin(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r)))
+    if(Hp.nu !=0 ){
+        for(vec=0; vec<3; vec++) {
+           J_alpha= (1./Hp.h)*(Psi.r*Site[nn(i, vec, 1)].Psi[alpha].r)*sin(Site[nn(i, vec, 1)].Psi[alpha].t - Psi.t + Hp.h*Hp.e*Site[i].A[vec]);
+           J_beta= (1./Hp.h)*(Site[i].Psi[beta].r*Site[nn(i, vec, 1)].Psi[beta].r)*sin(Site[nn(i, vec, 1)].Psi[beta].t - Site[i].Psi[beta].t + Hp.h*Hp.e*Site[i].A[vec]);
+           h_AB += Hp.nu*((J_alpha - J_beta)*(J_alpha - J_beta));
+
+           J_alpha= (1./Hp.h)*(Psi.r*Site[nn(i, vec, -1)].Psi[alpha].r)*sin( Site[i].Psi[beta].t - Site[nn(i, vec, -1)].Psi[alpha].t + Hp.h*Hp.e*Site[nn(i, vec, -1)].A[vec]);
+           J_beta= (1./Hp.h)*(Site[i].Psi[beta].r*Site[nn(i, vec, -1)].Psi[beta].r)*sin( Site[i].Psi[beta].t - Site[nn(i, vec, -1)].Psi[beta].t + Hp.h*Hp.e*Site[nn(i, vec, -1)].A[vec]);
+           h_AB += Hp.nu*((J_alpha - J_beta)*(J_alpha - J_beta));
+        }
     }
 
-
-    h_tot= h_Potential + h_Kinetic + h_Josephson;
+    h_tot= h_Potential + h_Kinetic + h_Josephson + h_AB;
     return h_tot;
 }
 
 double local_Htheta(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned int iz, unsigned int alpha,  struct H_parameters &Hp, struct Node* Site){
 
-    double h_Kinetic=0., h_Josephson=0., h_tot;
+    double h_Kinetic=0., h_Josephson=0., h_tot, h_AB=0.;
+    double J_alpha, J_beta;
     double h2=(Hp.h*Hp.h);
-    unsigned int beta=0, vec=0, i;
+    unsigned int beta, vec=0, i;
 
     i=ix +Lx*(iy+Ly*iz);
+
+    if(alpha==0){
+        beta=1;
+    }else if(alpha==1){
+        beta=0;
+    }
+
     //We need to compute just the part of the Hamiltonian involving Psi.t
 
     //Kinetic= -(1/h²)*\sum_k=1,2,3 (|Psi_{alpha}(r)||Psi_{alpha}(r+k)|* cos(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r)))
@@ -145,19 +172,35 @@ double local_Htheta(struct O2 Psi, unsigned int ix, unsigned int iy, unsigned in
     }
 
     //Biquadratic Josephson= \sum_beta!=alpha |Psi_{alpha}(r)|²|Psi_{beta}(r)|²* cos(2(theta_{alpha}(r) - theta_{beta}(r)))
-    if(alpha==0){
-        h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[1])*cos(2*(Psi.t - Site[i].Psi[1].t)));
-    }else if(alpha==1){
-        h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[0])*cos(2*(Psi.t - Site[i].Psi[0].t)));
+    h_Josephson+=(O2norm2(Psi)*O2norm2(Site[i].Psi[beta])*cos(2*(Psi.t - Site[i].Psi[beta].t)));
+
+    //Andreev-Bashkin term = \sum_beta!=alpha \sum_k=1,2,3 nu*(J^k_alpha - J^k_beta)^2;
+    // with J^k_alpha= |Psi_{alpha}(r)||Psi_{alpha}(r+k)|* sin(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r)))
+    if(Hp.nu !=0 ) {
+        for (vec = 0; vec < 3; vec++) {
+            J_alpha = (1. / Hp.h) * (Psi.r * Site[nn(i, vec, 1)].Psi[alpha].r) *
+                      sin(Site[nn(i, vec, 1)].Psi[alpha].t - Psi.t + Hp.h * Hp.e * Site[i].A[vec]);
+            J_beta = (1. / Hp.h) * (Site[i].Psi[beta].r * Site[nn(i, vec, 1)].Psi[beta].r) *
+                     sin(Site[nn(i, vec, 1)].Psi[beta].t - Site[i].Psi[beta].t + Hp.h * Hp.e * Site[i].A[vec]);
+            h_AB += Hp.nu * ((J_alpha - J_beta) * (J_alpha - J_beta));
+
+            J_alpha = (1. / Hp.h) * (Psi.r * Site[nn(i, vec, -1)].Psi[alpha].r) *
+                      sin(Psi.t - Site[nn(i, vec, -1)].Psi[alpha].t + Hp.h * Hp.e * Site[nn(i, vec, -1)].A[vec]);
+            J_beta = (1. / Hp.h) * (Site[i].Psi[beta].r * Site[nn(i, vec, -1)].Psi[beta].r) *
+                     sin(Site[i].Psi[beta].t - Site[nn(i, vec, -1)].Psi[beta].t +
+                         Hp.h * Hp.e * Site[nn(i, vec, -1)].A[vec]);
+            h_AB += Hp.nu * ((J_alpha - J_beta) * (J_alpha - J_beta));
+        }
     }
 
-    h_tot= h_Kinetic + h_Josephson;
+    h_tot= h_Kinetic + h_Josephson + h_AB;
     return h_tot;
 }
 
 double local_HA(double A, unsigned int ix, unsigned int iy, unsigned int iz,  unsigned int vec,  struct H_parameters &Hp, struct Node* Site){
 
-    double h_Kinetic=0., h_B=0, h_tot;
+    double h_Kinetic=0., h_B=0, h_AB=0., h_tot;
+    double J_alpha, J_beta;
     double h2=(Hp.h*Hp.h);
     unsigned int alpha=0, i;
     i=ix +Lx*(iy+Ly*iz);
@@ -168,9 +211,20 @@ double local_HA(double A, unsigned int ix, unsigned int iy, unsigned int iz,  un
     for(alpha=0; alpha<NC; alpha++){
         h_Kinetic-=(1./h2)*(Site[i].Psi[alpha].r*Site[nn(i, vec, 1)].Psi[alpha].r)*cos(Site[nn(i, vec, 1)].Psi[alpha].t - Site[i].Psi[alpha].t + Hp.h*Hp.e*A);
     }
+
+    //Andreev-Bashkin term = \sum_beta!=alpha \sum_k=1,2,3 nu*(J^k_alpha - J^k_beta)^2;
+    // with J^k_alpha= |Psi_{alpha}(r)||Psi_{alpha}(r+k)|* sin(theta_{alpha}(r+k) - theta_{alpha}(r) +h*e*A_k(r)))
+    if(Hp.nu !=0 ) {
+        J_alpha = (1. / Hp.h) * (Site[i].Psi[0].r * Site[nn(i, vec, 1)].Psi[0].r) *
+                  sin(Site[nn(i, vec, 1)].Psi[0].t - Site[i].Psi[0].t + Hp.h * Hp.e * Site[i].A[vec]);
+        J_beta = (1. / Hp.h) * (Site[i].Psi[1].r * Site[nn(i, vec, 1)].Psi[1].r) *
+                 sin(Site[nn(i, vec, 1)].Psi[1].t - Site[i].Psi[1].t + Hp.h * Hp.e * Site[i].A[vec]);
+        h_AB += Hp.nu * ((J_alpha - J_beta) * (J_alpha - J_beta));
+    }
+
     h_B=(0.5/h2)*F_2(A, vec, ix, iy, iz, Site);
 
-    h_tot= h_Kinetic + h_B;
+    h_tot= h_Kinetic + h_B + h_AB;
     return h_tot;
 }
 

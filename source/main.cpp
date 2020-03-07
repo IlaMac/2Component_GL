@@ -5,22 +5,23 @@
 #include "measures.h"
 #include "rng.h"
 #include "memory_check.h"
+#include "tictoc/timers.h"
 #include <h5pp/h5pp.h>
 
 unsigned int Lx, Ly, Lz, N;
 
 int main(int argc, char *argv[]){
 
-    struct Node* Lattice;
-    struct H_parameters Hp;
-    struct MC_parameters MCp;
-    struct PT_parameters PTp;
-    struct PTroot_parameters PTroot;
+    Node* Lattice;
+    H_parameters Hp;
+    MC_parameters MCp;
+    PT_parameters PTp;
+    PTroot_parameters PTroot;
+
     unsigned int i;
     long int seednumber=-1; /*by default it is a negative number which means that rng will use random_device*/
     double my_beta=0.244;
     int my_ind=0;
-    time_t tic, toc;
 
     std::string directory_read;
     std::string directory_parameters;
@@ -67,10 +68,7 @@ int main(int argc, char *argv[]){
 /*DETERMINE TOTAL NUMBER OF PROCESSORS*/
     MPI_Comm_size(MPI_COMM_WORLD, &PTp.np);
 
-    if(PTp.rank == PTp.root) {
-        //Initial time
-        tic = time(0);
-    }
+    if(PTp.rank == PTp.root){ prof::t_total.tic();}
 
     if(PTp.rank == PTp.root) {
         //Initialization ranks arrays
@@ -88,21 +86,18 @@ int main(int argc, char *argv[]){
     //Mainloop
     mainloop(Lattice, MCp, Hp, my_beta, my_ind, PTp, PTroot, directory_parameters);
 
-    if(PTp.rank == PTp.root) {
-        //Final time
-        toc = time(0);
-    }
+    if(PTp.rank == PTp.root){
 
+        prof::t_total.toc();
+        prof::t_total.print_time();
+        prof::t_update.print_time();
+        prof::t_swap.print_time();
+        prof::t_measures.print_time();
+        prof::t_writing.print_time();
 
-    std::cout << "Proccess current resident ram usage: " << process_memory_in_mb("VmRSS") << " MB" << std::endl;
-    std::cout << "Proccess maximum resident ram usage: " << process_memory_in_mb("VmHWM") << " MB" << std::endl;
-    std::cout << "Proccess maximum virtual  ram usage: " << process_memory_in_mb("VmPeak") << " MB" << std::endl;
-
-    if(PTp.rank == PTp.root) {
-        std::cout << "Total runtime: "
-                  << ((toc - tic) / 3600 > 0 ? std::to_string((toc - tic) / 3600) + " h " : "")
-                  << ((toc - tic) / 60 > 0 ? std::to_string(((toc - tic) % 3600) / 60) + " min " : "")
-                  << (toc - tic) % 60 << " sec" << "\n" << std::endl;
+        std::cout << "Proccess current resident ram usage: " << process_memory_in_mb("VmRSS") << " MB" << std::endl;
+        std::cout << "Proccess maximum resident ram usage: " << process_memory_in_mb("VmHWM") << " MB" << std::endl;
+        std::cout << "Proccess maximum virtual  ram usage: " << process_memory_in_mb("VmPeak") << " MB" << std::endl;
     }
 
     return 0;
@@ -134,22 +129,27 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
 
     file.createTable(MY_HDF5_MEASURES_TYPE, "Measurements", "Measures");
 
-
+    mis.reset();
     for (n = 0; n<MCp.nmisu; n++) {
         for (t = 0; t < MCp.tau; t++) {
-            metropolis(Site, MCp, Hp,  my_beta);
+            if(PTp.rank == PTp.root){ prof::t_update.tic();}
+            metropolis( Site, MCp, Hp,  my_beta);
+            if(PTp.rank == PTp.root) {prof::t_update.toc();}
         }
 
         //Measures
+        if(PTp.rank == PTp.root){ prof::t_measures.tic();}
         mis.reset();
-        energy(mis, Hp, my_beta, Site);
+        energy(mis, Hp, Site);
         dual_stiffness(mis, Hp, Site);
         magnetization(mis, Site);
         density_psi(mis, Site);
-        mis.my_rank=PTp.rank;
+        if(PTp.rank == PTp.root){ prof::t_measures.toc();}
 
+        //Writing on a file
+        if(PTp.rank == PTp.root){ prof::t_writing.tic();}
         file.appendTableEntries(mis, "Measurements");
-
+        if(PTp.rank == PTp.root){ prof::t_writing.toc();}
 
         if ((n % MCp.n_autosave) == 0) {
             //Save a configuration for the restarting
@@ -157,14 +157,15 @@ void mainloop(struct Node* Site, struct MC_parameters &MCp, struct H_parameters 
             }
 
         //Parallel Tempering swap
+        if(PTp.rank == PTp.root and  n==0) {prof::t_swap.tic();}
         parallel_temp(mis.E, my_beta, my_ind, PTp, PTroot);
+        if(PTp.rank == PTp.root and  n==0) {prof::t_swap.toc();}
 
         //Files and directory
         directory_write=directory_parameters+"/beta_"+std::to_string(my_ind);
-        file = h5pp::File(directory_write+"/Output.h5", h5pp::AccessMode::READWRITE, h5pp::CreateMode::OPEN,0);
-
-
+        file = h5pp::File(directory_write+"/Output.h5", h5pp::AccessMode::READWRITE, h5pp::CreateMode::OPEN);
     }
+
     save_lattice(Site, directory_write, std::string("final"));
 
 }

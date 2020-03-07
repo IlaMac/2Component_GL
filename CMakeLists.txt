@@ -20,8 +20,9 @@ option(ENABLE_TESTS                 "Enables CTest testing"                     
 option(BUILD_SHARED_LIBS            "Sets shared linking on/off"                                                      OFF)
 option(ENABLE_EIGEN3                "Use Eigen3 Library. Guide with -DEIGEN_INCLUDE_DIR:PATH=<dir-to-eigen3>"         OFF)
 option(ENABLE_SPDLOG                "Use SpdLog logging library. Guide with -Dspdlog_DIR:PATH=<dir-to-spdlog>"        OFF)
-option(ENABLE_H5PP                  "Use h5pp, a C++ front-end to HDF5"                                               OFF)
+option(ENABLE_H5PP                  "Use h5pp, a C++ front-end to HDF5"                                               ON)
 option(ENABLE_OPENMP                "Enable OpenMP flags such as -fopenmp"                                            ON)
+option(ENABLE_MPI                   "Enable MPI parallelization"                                                      ON)
 option(ENABLE_LTO                   "Enable link time optimization"                                                   OFF)
 option(AS_SUBPROJECT                "Try using this as a subproject with add_subdirectory()"                          OFF)
 option(APPEND_LIBSUFFIX             "Append <libname> to CMAKE_INSTALL_PREFIX"                                        ON)
@@ -110,6 +111,23 @@ file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
+if(ENABLE_MPI)
+    ### Link MPI
+    find_package(MPI REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE MPI::MPI_CXX)
+endif()
+
+
+##################################################################
+###  Force cmake to find .a library suffixes on static builds  ###
+##################################################################
+if(BUILD_SHARED_LIBS)
+    set(LINK_TYPE SHARED)
+else()
+    set(LINK_TYPE STATIC)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
+    target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
+endif()
 
 
 ##################################################################
@@ -124,11 +142,6 @@ if(NOT TARGET Threads::Threads)
     find_package(Threads)
     set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES pthread)
 endif()
-
-
-### Link MPI
-find_package(MPI REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE MPI::MPI_CXX)
 
 
 

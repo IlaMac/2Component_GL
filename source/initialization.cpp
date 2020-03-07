@@ -11,6 +11,7 @@ void initialize_Hparameters(struct H_parameters &Hp, const fs::path & directory_
         if((fin=fopen(hp_init_file.c_str(), "r"))) {
             fscanf(fin, "%lf" , &Hp.e);
             fscanf(fin, "%lf" , &Hp.h);
+            fscanf(fin, "%lf" , &Hp.nu);
             fscanf(fin, "%lf" , &Hp.b_low);
             fscanf(fin, "%lf" , &Hp.b_high);
             fclose(fin);
@@ -19,6 +20,7 @@ void initialize_Hparameters(struct H_parameters &Hp, const fs::path & directory_
     }else{
         Hp.e=0.5;
         Hp.h= 5.0;
+        Hp.nu=0.;
         Hp.b_low=0.2;
         Hp.b_high=0.25;
     }
