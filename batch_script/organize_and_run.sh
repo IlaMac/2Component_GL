@@ -89,6 +89,7 @@ echo "#!/bin/bash
 #SBATCH --output=${DIR_PAR}/logs/log_${jobname}.o
 #SBATCH --error=${DIR_PAR}/logs/log_${jobname}.e
 
+module load HDF5/1.10.5-GCCcore-8.2.0
 
 srun ${EXECUTE_DIR}/GL_2component ${L} ${DIR_PAR} &> ${DIR_PAR}/logs/log_${jobname}.o
 

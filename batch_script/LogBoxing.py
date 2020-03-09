@@ -10,16 +10,20 @@ import h5py
 beta_low=float(sys.argv[1])
 beta_high=float(sys.argv[2])
 nbeta=int(sys.argv[3])
-h=float(sys.argv[4])
-e=sys.argv[5]
+e=sys.argv[4]
+h=float(sys.argv[5])
+nu=float(sys.argv[6])
+
 
 beta=np.zeros((nbeta))
 if( (h).is_integer()): h=int(h)
+if( (nu).is_integer()): nu=int(nu)
 
 
 L=[]
-for ind in range(6, len(sys.argv)):
+for ind in range(7, len(sys.argv)):
     L.append(int(sys.argv[ind]))
+
 
 #L=sys.argv[6].split(',')
 #print(L)
@@ -39,7 +43,7 @@ for name in range(len(Observables)):
     A_name=Observables[name]
     transient_list=np.zeros((nbeta, len(L)))
     for l in range(len(L)):
-        BASEDIR=("/home/ilaria/Desktop/MultiComponents_SC/Output_2C/L%d_e%s_h%s_bmin%s_bmax%s" %(L[l], e,  h, beta_low, beta_high))
+        BASEDIR=("/home/ilaria/Desktop/MultiComponents_SC/Output_2C/L%d_e%s_h%s_nu%s_bmin%s_bmax%s" %(L[l], e,  h, nu, beta_low, beta_high))
 
         for b in range(nbeta):
             beta[b]=beta_low +b*(beta_high -beta_low)/(nbeta-1)
@@ -58,7 +62,6 @@ for name in range(len(Observables)):
             A_std=[]
             bins=[]
             while (tot_length< len(A)):
-                
                 A_mean.append(np.mean(A[start:tot_length]))
                 A_std.append(np.std(A[start:tot_length]))
                 bins.append(tot_length)
@@ -72,7 +75,7 @@ for name in range(len(Observables)):
             bins=np.array(bins)
             ##### Find where the plateau starts by taking the minimum values of the derivative of the binned funciton ####
             A_diff=np.diff(A_mean)
-            A_diffmin=np.amin(np.sqrt(A_diff*A_diff))
+            A_diffmin=np.min(np.sqrt(A_diff*A_diff))
             index=np.where(np.sqrt(A_diff*A_diff)==A_diffmin)
             #### The information to be extracted is the time up to the end of the bin where the plateau is observed: bin[index] ####            
             transient_list[b, l]=bins[index]

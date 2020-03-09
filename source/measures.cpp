@@ -32,7 +32,7 @@ void energy(struct Measures &mis, struct H_parameters &Hp, struct Node* Site){
                     if(Hp.nu !=0 ) {
                         J_alpha = (1. / Hp.h) * (Site[i].Psi[0].r * Site[nn(i, vec, 1)].Psi[0].r) *
                                   sin(Site[nn(i, vec, 1)].Psi[0].t - Site[i].Psi[0].t + Hp.h * Hp.e * Site[i].A[vec]);
-                        J_beta = (1. / Hp.h) * (Site[i].Psi[1].r * Site[nn(i, vec, 1)].Psi[1].r) *
+                        J_beta = (1. /Hp.h) * (Site[i].Psi[1].r * Site[nn(i, vec, 1)].Psi[1].r) *
                                  sin(Site[nn(i, vec, 1)].Psi[1].t - Site[i].Psi[1].t + Hp.h * Hp.e * Site[i].A[vec]);
                         h_AB += Hp.nu * ((J_alpha - J_beta) * (J_alpha - J_beta));
                     }

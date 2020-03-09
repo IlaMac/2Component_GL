@@ -13,15 +13,20 @@ import h5py
 beta_low=float(sys.argv[1])
 beta_high=float(sys.argv[2])
 nbeta=int(sys.argv[3])
-h=float(sys.argv[4])
-e=sys.argv[5]
+e=sys.argv[4]
+h=float(sys.argv[5])
+nu=float(sys.argv[6])
+
 
 beta=np.zeros((nbeta))
 if( (h).is_integer()): h=int(h)
+if( (nu).is_integer()): nu=int(nu)
+
 
 L=[]
-for ind in range(6, len(sys.argv)):
+for ind in range(7, len(sys.argv)):
     L.append(int(sys.argv[ind]))
+
 
 Observables=["E", "m", "ds"]
 
@@ -31,7 +36,7 @@ plt.rc('text.latex', preamble=r'\usepackage{bm}')
 
 tau_max=0
 for l in range(len(L)):
-    BASEDIR=("/home/ilaria/Desktop/MultiComponents_SC/Output_2C/L%d_e%s_h%s_bmin%s_bmax%s" %(L[l], e,  h, beta_low, beta_high))
+    BASEDIR=("/home/ilaria/Desktop/MultiComponents_SC/Output_2C/L%d_e%s_h%s_nu%s_bmin%s_bmax%s" %(L[l], e,  h, nu, beta_low, beta_high))
 
 #    fig, ax1 = plt.subplots(1, 1)
 #    ax1.set_title(r"$L=%s$" %L[l] )
@@ -50,9 +55,9 @@ for l in range(len(L)):
 #            fileO=("%s/beta_%d/%s.npy" %(BASEDIR, b, Observables[name]))
 #            Obs=np.load(fileO)
             file=h5py.File('%s/beta_%d/Output.h5' %(BASEDIR, b), 'r')
-            Obs=np.asarray(file['Measurements']['%s' %(Observables[name]))
+            Obs=np.asarray(file['Measurements']['%s' %(Observables[name])])
 
-            A_Obs=acf(Obs, nlags=int(len(Obs)*0.5), fft=True)
+            A_Obs=acf(Obs, nlags=int(len(Obs)/10), fft=True)
 #            A_Obs=acf(Obs, fft=True)
 #            fig, ax1 = plt.subplots(1, 1)
 #            ax1.set_title(r"$L=%s; beta=%s$" %(L[l], beta[b]) )
@@ -62,7 +67,8 @@ for l in range(len(L)):
 #            ax1.grid()
 #            plt.show()
 
-            temp=np.where(A_Obs[:]<0.01)
+            temp=np.where(A_Obs[:]<0.1)
+            print(Observables[name], b,temp)
             tmax_int=10*temp[0][0]
             temp_tau=[]
             time_int=1000

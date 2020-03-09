@@ -21,6 +21,7 @@ struct Measures{
     double d_rhoz= 0; //Dual stiffness along z
     double density_psi[NC] = {0};
     int my_rank = 0;
+
     void reset(){
         *this = Measures();
     }
