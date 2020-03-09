@@ -3,7 +3,7 @@
 BASEDIR=${HOME}/MultiComponents_SC
 SCRIPT_DIR=${BASEDIR}/2Component_GL/batch_script
 
-LLIST="8"
+LLIST="8 10 12 16"
 
 ############# Parameters of the Hamiltonian ---> HP_init.txt in a directory whose name contains the main parameters values##################
 H_e=0.5
@@ -66,8 +66,6 @@ for ((rank=0; rank<${ntasks}; rank++)); do
 
 if [ ! -d ./Sbeta_${rank} ]; then
    mkdir -p beta_${rank}
-	
-   rm beta_$rank/*
 
 fi
 
