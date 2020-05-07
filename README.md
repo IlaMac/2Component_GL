@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/IlaMac/2Component_GL.svg?branch=cpp-cmake)](https://travis-ci.org/IlaMac/2Component_GL)
+[![Build Status](https://travis-ci.org/DavidAce/2Component_GL.svg?branch=master)](https://travis-ci.org/DavidAce/2Component_GL)
 # 2Component_GL
 
 This project uses the build script written by DavidAce to generate the correct envinroment (in terms of libraries, dependencies, compilers) to run the program on any clusters (it is designed in particular for Tetralith and Kraken).
